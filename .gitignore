@@ -1,0 +1,15 @@
+
+# gihub files
+
+# "database" dir
+server/database/
+
+#project enviromental config files
+server/config.json
+
+#build dirs
+server/build/
+
+#vscode dirs
+.vscode/
+server/.vscode/
