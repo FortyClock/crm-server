@@ -6,7 +6,8 @@
 
 void StateController::getState(const drogon::HttpRequestPtr &req,
     std::function<void(const drogon::HttpResponsePtr &)> &&callback){
-
+    
+    
     try
     {
         // need to get full robot state
