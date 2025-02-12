@@ -1,0 +1,26 @@
+
+# gihub files
+
+# "database" dir
+server/database/
+
+#project enviromental config files
+server/config.json
+
+#build dirs
+server/build/
+
+#vscode dirs
+.vscode/
+server/.vscode/
+
+
+
+# дополнительные директории для интеграционных тестов на python (эти директории нужны не всем)
+server/testing-server-handlers/tests/__pycache__/
+server/testing-server-handlers/tests/.pytest_cache/
+server/testing-server-handlers/tests/bin/
+server/testing-server-handlers/tests/include/
+server/testing-server-handlers/tests/lib/
+server/testing-server-handlers/tests/lib64/
+server/testing-server-handlers/tests/pyvenv.cfg
