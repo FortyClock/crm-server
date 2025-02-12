@@ -13,3 +13,13 @@ server/build/
 #vscode dirs
 .vscode/
 server/.vscode/
+
+
+# дополнительные директории для интеграционных тестов на python (эти директории нужны не всем)
+testing-server-handlers/tests/__pycache__/
+testing-server-handlers/tests/.pytest_cache/
+testing-server-handlers/tests/bin/
+testing-server-handlers/tests/include/
+testing-server-handlers/tests/lib/
+testing-server-handlers/tests/lib64
+testing-server-handlers/tests/pyvenv.cfg
