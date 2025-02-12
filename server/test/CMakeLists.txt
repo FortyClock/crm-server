@@ -2,20 +2,30 @@ cmake_minimum_required(VERSION 3.5)
 project(utils_test CXX)
 
 
-find_package(GTest REQUIRED)
-find_package(Threads REQUIRED)
-
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
+# используем FetchContent для загрузки GTest непосредственно в процессе сборки CMake.
+# подгружает нужные библиотеки во время сборки проекта
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.14.0
+)
+FetchContent_MakeAvailable(googletest)
+
+
 # Добавляет в сборку пути к заголовочным файлам из проекта (в которых находятся функции,
 # которые нужно протестировать)
 include_directories(
-    ${GTEST_INCLUDE_DIRS}
+    ${googletest_SOURCE_DIR}/googletest/include
+    ${googletest_SOURCE_DIR}/googletest
     ../sutils
 )
+
 
 
 # Здесь прописывается название проекта с тестами,
@@ -28,6 +38,7 @@ add_executable(
 )
 
 
+
 # Привязывает необходимые библиотеки к сборке проекта с тестами
 target_link_libraries(
     utils_test # название проекта с тестами (есть в начале этого файла)
@@ -35,3 +46,8 @@ target_link_libraries(
     GTest::gtest_main
     Threads::Threads
 )
+
+
+
+# Отключаем find_package(GTest REQUIRED) т.к. GTest теперь подключается через FetchContent
+#find_package(GTest REQUIRED)
