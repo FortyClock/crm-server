@@ -10,17 +10,26 @@ class ActionController : public drogon::HttpController<ActionController>
     METHOD_LIST_BEGIN
     
     ADD_METHOD_TO(
-      ActionController::postPosition,
-      "/position",
+      ActionController::shoot,
+      "/shoot",
+      drogon::Post
+    );
+
+    ADD_METHOD_TO(
+      ActionController::repair,
+      "/repair",
       drogon::Post
     );
 
     METHOD_LIST_END
 
 
-    void postPosition(
+    void shoot(
       const drogon::HttpRequestPtr &req,
-      std::function<void(const drogon::HttpResponsePtr &)> &&callback
-    );
+      std::function<void(const drogon::HttpResponsePtr &)> &&callback);
+
+    void repair(
+      const drogon::HttpRequestPtr &req,
+      std::function<void(const drogon::HttpResponsePtr &)> &&callback);
     
 };

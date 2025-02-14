@@ -1,63 +1,64 @@
 {
     "map": {
-        "width": 10,
-        "height": 10,
-        "cells": [
-            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        "size": 10,
+        "items": [
+            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Enemy", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"]
         ]
     },
-    "start position": {
-        "x": 2,
-        "y": 5,
-        "direction": "east"
+    "start_position": {
+        "position": {
+            "x": 3,
+            "y": 3
+        },
+        "faced_to": "W"
     },
-    "meh condition": {
-        "repair plant": {
-            "strength": 80,
-            "repair kits": 3,
+    "robot_state": {
+        "repair_station": {
+            "capacity": 10,
+            "repair_kit_num": 2,
             "id": "repair_unit_001"
         },
-        "weapon": {
-            "strength": 95,
+        "gun": {
+            "capacity": 100,
             "cartridges": 50,
             "id": "weapon_001"
         },
-        "weapon manipulator": {
-            "strength": 70,
+        "gun_manip": {
+            "capacity": 100,
             "id": "weapon_manipulator_001"
         },
-        "grasping manipulator": {
-            "strength": 60,
+        "grab_manip": {
+            "capacity": 100,
             "id": "grab_manipulator_001"
         },
-        "left leg": {
-            "strength": 85,
+        "left_leg": {
+            "capacity": 100,
             "id": "left_leg_001"
         },
-        "right leg": {
-            "strength": 85,
+        "right_leg": {
+            "capacity": 100,
             "id": "right_leg_001"
         },
         "torso": {
-            "strength": 90,
+            "capacity": 100,
             "id": "torso_001"
         }
     },
-    "intelligence information": {
-        "meh position": {
-            "x": 2,
-            "y": 5
+    "intelligence_inf": {
+        "position": {
+            "x": 3,
+            "y": 3
         },
-        "direction": "east"
+        "faced_to": "W"
     }
 }
   

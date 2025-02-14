@@ -3,9 +3,10 @@ FROM python:3.9
 
 WORKDIR /app
 COPY requirements.txt .
-COPY tests.py .
+COPY all .
 
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir requirements.txt
-
-CMD ["pytest", "tests.py"]
+CMD ["pytest", "test_shoot.py"]
+#CMD ["pytest", "test_shoot.py", "test_repair.py"]
