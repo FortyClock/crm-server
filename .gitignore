@@ -2,7 +2,7 @@
 # gihub files
 
 # "database" dir
-server/database/
+server/database/mehConfig.json
 
 #project enviromental config files
 server/config.json

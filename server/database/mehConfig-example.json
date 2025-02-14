@@ -1,0 +1,63 @@
+{
+    "map": {
+        "width": 10,
+        "height": 10,
+        "cells": [
+            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+    },
+    "start position": {
+        "x": 2,
+        "y": 5,
+        "direction": "east"
+    },
+    "meh condition": {
+        "repair plant": {
+            "strength": 80,
+            "repair kits": 3,
+            "id": "repair_unit_001"
+        },
+        "weapon": {
+            "strength": 95,
+            "cartridges": 50,
+            "id": "weapon_001"
+        },
+        "weapon manipulator": {
+            "strength": 70,
+            "id": "weapon_manipulator_001"
+        },
+        "grasping manipulator": {
+            "strength": 60,
+            "id": "grab_manipulator_001"
+        },
+        "left leg": {
+            "strength": 85,
+            "id": "left_leg_001"
+        },
+        "right leg": {
+            "strength": 85,
+            "id": "right_leg_001"
+        },
+        "torso": {
+            "strength": 90,
+            "id": "torso_001"
+        }
+    },
+    "intelligence information": {
+        "meh position": {
+            "x": 2,
+            "y": 5
+        },
+        "direction": "east"
+    }
+}
+  
