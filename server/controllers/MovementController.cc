@@ -2,15 +2,11 @@
 #include "jsoncpp/json/json.h"
 #include <iostream>
 
-//check
-//hello
-
 void MovementController ::postPosition(const drogon::HttpRequestPtr &req,
     std::function<void(const drogon::HttpResponsePtr &)> &&callback){
     
     Json::Value jsonBody;
-
-    
+   
     try
     {
         auto requestBody = req->getJsonObject();
@@ -45,7 +41,6 @@ void MovementController ::postPosition(const drogon::HttpRequestPtr &req,
         jsonBody["message"] = "Position received";
         auto response = HttpResponse::newHttpJsonResponse(jsonBody);
         callback(response);
-
     }
 
     catch(const std::exception& e)
@@ -56,7 +51,6 @@ void MovementController ::postPosition(const drogon::HttpRequestPtr &req,
         response->setStatusCode(drogon::HttpStatusCode::k500InternalServerError);
         callback(response);
     }
-
 }
 
 

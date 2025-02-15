@@ -1,22 +1,43 @@
 #include "StateController.h"
 #include "jsoncpp/json/json.h"
 #include <iostream>
+#include <fstream>
 
 //check
 //hello
 
+
+Json::Value StateController::loadConfig()
+{
+    Json::Value config;
+    std::ifstream configFile("../database/mehConfig.json");
+
+    if(configFile.is_open()){
+        configFile >> config;
+        configFile.close();
+    } 
+    
+    else {
+        std::cerr << "Error: Unable to open config file!" << std::endl;
+        config["error"] = "Unable to open config file!";
+    }
+
+    return config;
+}
+
 void StateController::getState(const drogon::HttpRequestPtr &req,
     std::function<void(const drogon::HttpResponsePtr &)> &&callback){
 
+
     try
     {
-        // need to get full robot state
-        // for example -> make json answer message = "State controller is working!!!"
+        Json::Value resp;                     // response from server to crm
+        Json::Value config = loadConfig();    // конфигурация меха
 
-        Json::Value resp;      // response from server to crm
-        resp["message"] = "State controller is working!!!";
+        //resp["message"] = "State controller is working!!!";
 
-        auto response = drogon::HttpResponse::newHttpJsonResponse(resp);
+        auto response = drogon::HttpResponse::newHttpJsonResponse(config);
+        //auto response = drogon::HttpResponse::newHttpJsonResponse(resp);
         response->setStatusCode(drogon::HttpStatusCode::k200OK);
 
         callback(response);
@@ -44,7 +65,7 @@ void StateController::postMessage(const drogon::HttpRequestPtr &req,
     {
         auto requestBody = req->getJsonObject();
 
-        // check the body is not null
+        // Проверка что запрос не пустой
         if (requestBody == nullptr) {
             jsonBody["status"] = "error";
             jsonBody["message"] = "Body is required";
@@ -54,7 +75,7 @@ void StateController::postMessage(const drogon::HttpRequestPtr &req,
             return;
         }
 
-        // check the body contains the message field
+        // Проверка что в теле запроса имеется 'message'
         if (!requestBody->isMember("message")) {
             jsonBody["status"] = "error";
             jsonBody["message"] = "Field `message` is required";
@@ -64,17 +85,15 @@ void StateController::postMessage(const drogon::HttpRequestPtr &req,
             return;
         }
 
-        // get the message
+        // получение сообщения
         std::string message = requestBody->get("message", "").asString();
-
-        
+      
         std::cout << "Received message: " << message << std::endl;
 
         jsonBody["status"] = "ok";
         jsonBody["message"] = "Message received: " + message;
         auto response = HttpResponse::newHttpJsonResponse(jsonBody);
         callback(response);
-
     }
 
     catch(const std::exception& e)

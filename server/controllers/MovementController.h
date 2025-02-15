@@ -16,7 +16,6 @@ class MovementController : public drogon::HttpController<MovementController>
       drogon::Post
     );
     
-
     METHOD_LIST_END
     
     void postPosition(const drogon::HttpRequestPtr &req,
