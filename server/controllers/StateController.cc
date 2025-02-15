@@ -37,6 +37,8 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
 
 void StateController::postMessage(const drogon::HttpRequestPtr &req,
                std::function<void(const drogon::HttpResponsePtr &)> &&callback){
+    
+    Json::Value jsonBody;
 
     try
     {
@@ -72,15 +74,6 @@ void StateController::postMessage(const drogon::HttpRequestPtr &req,
         jsonBody["message"] = "Message received: " + message;
         auto response = HttpResponse::newHttpJsonResponse(jsonBody);
         callback(response);
-
-    catch (const std::exception& e)
-    {
-        jsonBody["status"] = "error";
-        jsonBody["message"] = std::string("Error: ") + e.what();
-        auto response = HttpResponse::newHttpJsonResponse(jsonBody);
-        response->setStatusCode(drogon::HttpStatusCode::k500InternalServerError);
-        callback(response);
-    }
 
     }
 
