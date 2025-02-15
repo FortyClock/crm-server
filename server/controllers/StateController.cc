@@ -31,13 +31,23 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
 
     try
     {
-        Json::Value resp;                     // response from server to crm
         Json::Value config = loadConfig();    // конфигурация меха
 
-        //resp["message"] = "State controller is working!!!";
+        // ошибка, если ключ RobotState не найден в конфигурации меха
+        if(!config.isMember("RobotState")){
+            Json::Value errorResponse;
+            errorResponse["status"] = "error";
+            errorResponse["message"] = "RobotState not found in configuration";
 
-        auto response = drogon::HttpResponse::newHttpJsonResponse(config);
-        //auto response = drogon::HttpResponse::newHttpJsonResponse(resp);
+            auto response = drogon::HttpResponse::newHttpJsonResponse(errorResponse);
+            response->setStatusCode(drogon::HttpStatusCode::k404NotFound);
+            callback(response);
+            return;
+        }
+
+        Json::Value robotState = config["RobotState"];
+
+        auto response = drogon::HttpResponse::newHttpJsonResponse(robotState);
         response->setStatusCode(drogon::HttpStatusCode::k200OK);
 
         callback(response);
