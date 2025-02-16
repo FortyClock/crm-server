@@ -1,35 +1,12 @@
 #include "ActionController.h"
+
+#include "actionSutils.h"
 #include <jsoncpp/json/json.h>
 
 #include <iostream>
 #include <fstream>
 
-
-// ПЕРЕНЕСТИ В SUTILS
-Json::Value getConfigMehJsonValues(){
-
-    Json::Value allData;
-
-    std::ifstream configMehFile("../database/mehConfig-example.json", std::ifstream::binary);
-    if(!configMehFile.is_open()){
-
-        allData["error"] = "Can't open config meh file";
-        return allData;
-    }
-
-    configMehFile >> allData;
-
-    configMehFile.close();
-    
-    if(allData.empty()){
-        allData["error"] = "Config file is empty";
-        return allData;
-    }
-
-    return allData;
-
-}
-
+using namespace actionSUtils;
 
 // НЕ ЗАВЕРШЁН
 void ActionController::shoot(const drogon::HttpRequestPtr &req,
@@ -50,28 +27,83 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
 
     }
 
+
     int x = -1, y = -1;
+    Json::Value mehConfig = {};
 
     try
     {
-        x = (*reqBody)['x'].asInt();
-        y = (*reqBody)['y'].asInt();
+
+        x = reqBody->get("x", -2).asInt();
+        y = reqBody->get("y", -2).asInt();
+
+
+        mehConfig = actionSUtils::getConfigMehJsonValues("mehConfig-example.json");
+
+        actionSUtils::canShooting(x, y, mehConfig);
+
     }
     catch(const std::exception& e)
     {
         Json::Value err;
-        err["error"] = "Empty data";
+
+        if(x < 0 || y < 0){
+
+            err["error"] = "Empty data";
+        }
+        else if(std::string(e.what()) == "broke_gun_manip"){
+
+            err["error"] = "Gun manipulator broke";
+
+            mehConfig["robot_state"]["gun_manip"] = "Empty";
+            actionSUtils::rewriteJsonFile("mehConfig-example.json", mehConfig);
+
+        }
+        else{
+
+            err["error"] = e.what();
+        }
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(err);
         response->setStatusCode(drogon::HttpStatusCode::k400BadRequest);
 
         callback(response);
+        return;
     }
     
 
-    // Нужно получить данные о положении робота и его взгляда, а затем сравнить с данными
-    // о стрельбе, если они в одном направлении и в 
-    // пределах 3х клеток => всё ок, иначе 400 error
+    try
+    {
+        
+        Json::Value resp;
+        resp["message"] = actionSUtils::shooting(x, y, mehConfig);
+
+        actionSUtils::rewriteJsonFile("mehConfig-example.json", mehConfig);
+
+        auto response = drogon::HttpResponse::newHttpJsonResponse(resp);
+        if(resp["message"] == "Shot"){
+            response->setStatusCode(drogon::HttpStatusCode::k200OK);
+        }
+        else{
+            response->setStatusCode(drogon::HttpStatusCode::k201Created);
+        }
+
+        callback(response);
+        return;
+
+    }
+    catch(const std::exception& e)
+    {
+
+        Json::Value err;
+        err["error"] = e.what();
+
+        auto response = drogon::HttpResponse::newHttpJsonResponse(err);
+        response->setStatusCode(drogon::HttpStatusCode::k500InternalServerError);
+
+        callback(response);
+        return;
+    }
 
     
 }

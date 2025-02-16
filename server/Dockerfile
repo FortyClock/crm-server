@@ -42,22 +42,26 @@ RUN cmake .. && make && make install
 
 
 
-# Устанавливаем GTest здесь больше не нужна, он устанавливается во время сборки
+RUN mkdir -p /root/crm-server/server
 
 
 
 # Копируем исходный код сервера в контейнер
-COPY . /app
+COPY . /root/crm-server/server
 
-WORKDIR /app
+WORKDIR /root/crm-server/server
 
 RUN rm -rf build
 
 RUN mkdir build
 
 # Переходим в директорию для сборки
-WORKDIR /app/build
+WORKDIR /root/crm-server/server/build
 
+
+
+# Указываем CMake, где искать JsonCpp
+ENV CMAKE_PREFIX_PATH=/usr
 
 
 # Собираем проект с помощью CMake
@@ -69,5 +73,5 @@ RUN make
 
 
 # Запускаем unit-тесты и сервер
-CMD cd /app/build && ./test/utils_test && ./server
+CMD cd /root/crm-server/server/build && ./test/utils_test && ./server
 

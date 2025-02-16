@@ -1,64 +1,187 @@
 {
-    "map": {
-        "size": 10,
-        "items": [
-            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
-            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
-            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
-            ["Empty", "Empty", "Enemy", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
-            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
-            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
-            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
-            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
-            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"],
-            ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"]
-        ]
-    },
-    "start_position": {
-        "position": {
-            "x": 3,
-            "y": 3
-        },
-        "faced_to": "W"
-    },
-    "robot_state": {
-        "repair_station": {
-            "capacity": 10,
-            "repair_kit_num": 2,
-            "id": "repair_unit_001"
-        },
-        "gun": {
-            "capacity": 100,
-            "cartridges": 50,
-            "id": "weapon_001"
-        },
-        "gun_manip": {
+	"intelligence_inf" : 
+	{
+		"faced_to" : "W",
+		"position" : 
+		{
+			"x" : 3,
+			"y" : 3
+		}
+	},
+	"map" : 
+	{
+		"items" : 
+		[
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Enemy",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			]
+		],
+		"size" : 10
+	},
+	"robot_state" : 
+	{
+		"grab_manip" : 
+		{
+			"capacity" : 100,
+			"id" : "grab_manipulator_001"
+		},
+		"gun" : 
+		{
+			"capacity" : 100,
+			"cartridges" : 3,
+			"id" : "weapon_001"
+		},
+		"gun_manip" :
+		{
             "capacity": 100,
             "id": "weapon_manipulator_001"
         },
-        "grab_manip": {
-            "capacity": 100,
-            "id": "grab_manipulator_001"
-        },
-        "left_leg": {
-            "capacity": 100,
-            "id": "left_leg_001"
-        },
-        "right_leg": {
-            "capacity": 100,
-            "id": "right_leg_001"
-        },
-        "torso": {
-            "capacity": 100,
-            "id": "torso_001"
-        }
-    },
-    "intelligence_inf": {
-        "position": {
-            "x": 3,
-            "y": 3
-        },
-        "faced_to": "W"
-    }
+		"left_leg" : 
+		{
+			"capacity" : 100,
+			"id" : "left_leg_001"
+		},
+		"repair_station" : 
+		{
+			"capacity" : 10,
+			"id" : "repair_unit_001",
+			"repair_kit_num" : 2
+		},
+		"right_leg" : 
+		{
+			"capacity" : 100,
+			"id" : "right_leg_001"
+		},
+		"torso" : 
+		{
+			"capacity" : 100,
+			"id" : "torso_001"
+		}
+	},
+	"start_position" : 
+	{
+		"faced_to" : "W",
+		"position" : 
+		{
+			"x" : 3,
+			"y" : 3
+		}
+	}
 }
-  
