@@ -15,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     networkManager = new QNetworkAccessManager(this);
     serverUrl = QUrl("https://checkrobo4.free.beeceptor.com");
-
     connect(ui->getStateButton, &QPushButton::clicked, this, &MainWindow::getState);
     connect(ui->repairButton, &QPushButton::clicked, this, &MainWindow::sendRepairRequest);
     connect(ui->moveButton, &QPushButton::clicked, this, &MainWindow::sendMoveRequest);
@@ -40,7 +39,8 @@ void MainWindow::getState()
     QUrl url = serverUrl;
     url.setPath("/state");
 
-    QNetworkRequest request(url);
+    QNetworkRequest request;
+    request.setUrl(url);
     QNetworkReply *reply = networkManager->get(request);
 
     connect(reply, &QNetworkReply::finished, this, [=]() {
@@ -149,8 +149,9 @@ void MainWindow::sendShootRequest()
 
     QJsonDocument jsonDoc(json);
     QByteArray postData = jsonDoc.toJson();
+    QNetworkRequest request;
 
-    QNetworkRequest request(url);
+    request.setUrl(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     QNetworkReply *reply = networkManager->post(request, postData);
@@ -277,7 +278,76 @@ void MainWindow::parseState(const QJsonObject &json)
 
 void MainWindow::handleMapButtonClick()
 {
-    // Здесь код, который должен выполняться при нажатии на кнопку mapWidget
-    QMessageBox::information(this, "Map", "Map button clicked!"); // Пример
-    //TODO: Сделать открытие виджета с картой
+    getMap();
 }
+
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    int i = 0;
+    QPainter painter(this);
+    for(i = 0; i < jsonMap.size(); i++)
+    {
+        QJsonArray tmpArray = jsonMap.at(i).toArray();
+        int x_rect = 45;
+        int y_rect = 35;
+        int y = 320+i*(y_rect+10);
+        for(int j = 0; j < tmpArray.size(); j++)
+        {
+            int x= 45+j*(x_rect+10);
+            switch(int_from_map(tmpArray.at(j).toString().toStdString()))
+            {
+            case 0:
+                painter.setPen(Qt::darkGreen);
+                painter.drawRect(x, y, x_rect, y_rect);
+                break;
+            case 1:
+                painter.setPen(Qt::yellow);
+                painter.drawRect(x, y, x_rect, y_rect);
+                break;
+            case 2:
+                painter.setPen(Qt::blue);
+                painter.drawRect(x, y, x_rect, y_rect);
+            }
+        }
+    }
+    if(i == 0) {
+        painter.drawText(45,320,"НАЖМИТЕ НА КНОПКУ КАРТА");
+    }
+    painter.end();
+}
+void MainWindow::getMap()
+{
+    QNetworkRequest request;
+    request.setUrl(QUrl("https://qmaptest5.free.beeceptor.com/map"));
+    networkManager->get(request);
+    QNetworkReply *reply = networkManager->get(request);
+    connect(reply, &QNetworkReply::finished, this, [=]() {
+        if (reply->error() == QNetworkReply::NoError)
+        {
+            document = QJsonDocument::fromJson(reply->readAll());
+            QJsonObject root = document.object();
+            QJsonObject map = (root.value("map")).toObject();
+            mapSize = map.value("size").toInt();
+            jsonMap = (map.value("items")).toArray();
+            qDebug() << document;
+            reply->deleteLater();
+            QWidget::repaint();
+        }
+        else
+        {
+            QMessageBox::critical(this, "Error", "Network error: " + reply->errorString());
+        }
+        reply->deleteLater();
+    });
+}
+int int_from_map(const std::string& map)
+{
+    for (int i = 0; i < std::size(map_items); i++)
+    {
+        if (map == map_items[i])
+            return i;
+    }
+    return 10;
+}
+
+
