@@ -1,17 +1,12 @@
 FROM python:3.9
 
 
-# Устанавливаем необходимые пакеты Python
-RUN pip install --no-cache-dir pytest pytest_check requests
-
-
-# Копируем файлы тестов в контейнер
-COPY . /app
-
-
-# Устанавливаем рабочую директорию
 WORKDIR /app
+COPY requirements.txt .
+COPY all .
 
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Запускаем интеграционные тесты из tests.py
-CMD ["pytest", "tests.py"]
+CMD ["pytest", "test_shoot.py"]
+#CMD ["pytest", "test_shoot.py", "test_repair.py"]

@@ -9,7 +9,9 @@
 int main() {
 
     drogon::app()
-        .loadConfigFile("../config.json")
+        .loadConfigFile(
+            std::string(getenv("HOME")) + "/crm-server/server/config-example.json"
+        )
         .run();
 
     return 0;

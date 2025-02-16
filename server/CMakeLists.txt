@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(server CXX)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 # -fsanitize=address Это флаг компилятора, который включает AddressSanitizer.
@@ -17,7 +18,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=undefined"
 # Точно указывает компилятору на исходные файлы
 set(SRC_FILES
     main.cc
-    sutils/sutils.cc
+    sutils/actionSutils.cc
     controllers/StateController.cc
     controllers/MapController.cc
     controllers/MovementController.cc
@@ -31,11 +32,24 @@ set(SRC_FILES
 aux_source_directory(controllers CTL_SRC_DIR)
 
 
+set(CMAKE_PREFIX_PATH "/usr" CACHE PATH "Path to JsonCpp")
+
+find_package(jsoncpp REQUIRED)
+if(NOT jsoncpp_FOUND)
+    message(FATAL_ERROR "JsonCpp not found")
+endif()
+
+message(STATUS "jsoncpp_INCLUDE_DIRS: ${jsoncpp_INCLUDE_DIRS}")
+message(STATUS "jsoncpp_LIBRARIES: ${jsoncpp_LIBRARIES}")
+
+
+
 # указывает компилятору, где искать заголовочные файлы
 # (в каких директориях)
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/controllers
     ${CMAKE_CURRENT_SOURCE_DIR}/sutils
+    ${jsoncpp_INCLUDE_DIRS}
 )
 
 
@@ -49,7 +63,7 @@ add_executable(${PROJECT_NAME} ${SRC_FILES} ${CTL_SRC_DIR})
 
 # Подключение Drogon
 find_package(Drogon CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon)
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon jsoncpp_lib)
 
 
 add_subdirectory(test)
