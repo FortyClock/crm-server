@@ -2,9 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QtNetwork>
 #include <QNetworkAccessManager>
+#include <QUrl>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMessageBox>
+#include <QDebug>
+#include "ui_mainwindow.h" // Этот файл генерируется из вашего .ui файла
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,13 +22,24 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
 private slots:
-    void on_pushButton_clicked();
-    void replyFinished(QNetworkReply *reply);
+    void getState();
+    void sendRepairRequest();
+    void sendMoveRequest();
+    void sendTurnRequest();
+    void sendShootRequest();
+    void parseState(const QJsonObject &json);
+    void handleMapButtonClick();
 
 private:
     Ui::MainWindow *ui;
+    QNetworkAccessManager *networkManager;
+    QUrl serverUrl;
+
+    // Локальные переменные для хранения координат
+    int xCoord;
+    int yCoord;
 };
 #endif // MAINWINDOW_H
