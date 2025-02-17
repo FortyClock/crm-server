@@ -28,16 +28,15 @@ Json::Value StateController::loadConfig()
 void StateController::getState(const drogon::HttpRequestPtr &req,
     std::function<void(const drogon::HttpResponsePtr &)> &&callback){
 
-
     try
     {
         Json::Value config = loadConfig();    // конфигурация меха
 
         // ошибка, если ключ RobotState не найден в конфигурации меха
-        if(!config.isMember("RobotState")){
+        if(!config.isMember("RobotState") || !config.isMember("IntelligenceState")){
             Json::Value errorResponse;
             errorResponse["status"] = "error";
-            errorResponse["message"] = "RobotState not found in configuration";
+            errorResponse["message"] = "RobotState or IntelligenceState not found in configuration";
 
             auto response = drogon::HttpResponse::newHttpJsonResponse(errorResponse);
             response->setStatusCode(drogon::HttpStatusCode::k404NotFound);
@@ -45,12 +44,23 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
             return;
         }
 
+        //извлекаем RobotState и "IntelligenceState" 
         Json::Value robotState = config["RobotState"];
+        Json::Value intelligenceState = config["IntelligenceState"];
 
-        auto response = drogon::HttpResponse::newHttpJsonResponse(robotState);
-        response->setStatusCode(drogon::HttpStatusCode::k200OK);
+        Json::Value allState;
+        allState["RobotState"] = robotState;
+        allState["IntelligenceState"]= intelligenceState;
+        
 
-        callback(response);
+        auto responseAllState = drogon::HttpResponse::newHttpJsonResponse(allState);
+        //auto responseIntelligenceState = drogon::HttpResponse::newHttpJsonResponse(intelligenceState);
+
+        responseAllState->setStatusCode(drogon::HttpStatusCode::k200OK);
+        //responseIntelligenceState->setStatusCode(drogon::HttpStatusCode::k200OK);
+
+        callback(responseAllState);
+        //callback(responseIntelligenceState);
     }
     catch(const std::exception& e)
     {
@@ -66,55 +76,4 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
 
 }
 
-void StateController::postMessage(const drogon::HttpRequestPtr &req,
-               std::function<void(const drogon::HttpResponsePtr &)> &&callback){
-    
-    Json::Value jsonBody;
-
-    try
-    {
-        auto requestBody = req->getJsonObject();
-
-        // Проверка что запрос не пустой
-        if (requestBody == nullptr) {
-            jsonBody["status"] = "error";
-            jsonBody["message"] = "Body is required";
-            auto response = HttpResponse::newHttpJsonResponse(jsonBody);
-            response->setStatusCode(HttpStatusCode::k400BadRequest);
-            callback(response);
-            return;
-        }
-
-        // Проверка что в теле запроса имеется 'message'
-        if (!requestBody->isMember("message")) {
-            jsonBody["status"] = "error";
-            jsonBody["message"] = "Field `message` is required";
-            auto response = HttpResponse::newHttpJsonResponse(jsonBody);
-            response->setStatusCode(HttpStatusCode::k400BadRequest);
-            callback(response);
-            return;
-        }
-
-        // получение сообщения
-        std::string message = requestBody->get("message", "").asString();
-      
-        std::cout << "Received message: " << message << std::endl;
-
-        jsonBody["status"] = "ok";
-        jsonBody["message"] = "Message received: " + message;
-        auto response = HttpResponse::newHttpJsonResponse(jsonBody);
-        callback(response);
-    }
-
-    catch(const std::exception& e)
-    {
-        jsonBody["status"] = "error";
-        jsonBody["message"] = std::string("Error: ") + e.what();
-        auto response = HttpResponse::newHttpJsonResponse(jsonBody);
-        response->setStatusCode(drogon::HttpStatusCode::k500InternalServerError);
-        callback(response);
-    }
-    
-    
-}
 
