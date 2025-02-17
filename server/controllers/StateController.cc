@@ -3,12 +3,8 @@
 #include <iostream>
 #include <fstream>
 
-//check
-//hello
-
-
 Json::Value StateController::loadConfig()
-{
+{   
     Json::Value config;
     std::ifstream configFile("../database/mehConfig.json");
 
@@ -32,7 +28,7 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
     {
         Json::Value config = loadConfig();    // конфигурация меха
 
-        // ошибка, если ключ RobotState не найден в конфигурации меха
+        // ошибка, если RobotState или IntelligenceState не найдены в конфигурации меха
         if(!config.isMember("RobotState") || !config.isMember("IntelligenceState")){
             Json::Value errorResponse;
             errorResponse["status"] = "error";
@@ -44,23 +40,20 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
             return;
         }
 
-        //извлекаем RobotState и "IntelligenceState" 
+        // извлекаем RobotState и IntelligenceState 
         Json::Value robotState = config["RobotState"];
         Json::Value intelligenceState = config["IntelligenceState"];
 
+        // комбинируем 
         Json::Value allState;
         allState["RobotState"] = robotState;
         allState["IntelligenceState"]= intelligenceState;
         
 
         auto responseAllState = drogon::HttpResponse::newHttpJsonResponse(allState);
-        //auto responseIntelligenceState = drogon::HttpResponse::newHttpJsonResponse(intelligenceState);
-
         responseAllState->setStatusCode(drogon::HttpStatusCode::k200OK);
-        //responseIntelligenceState->setStatusCode(drogon::HttpStatusCode::k200OK);
 
         callback(responseAllState);
-        //callback(responseIntelligenceState);
     }
     catch(const std::exception& e)
     {
@@ -71,9 +64,7 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
         response->setStatusCode(drogon::HttpStatusCode::k500InternalServerError);
 
         callback(response);
-    }
-    
-
+    } 
 }
 
 

@@ -20,8 +20,8 @@ class StateController : public drogon::HttpController<StateController>
     METHOD_LIST_END
 
     void getState(const drogon::HttpRequestPtr &req,
-        std::function<void(const drogon::HttpResponsePtr &)> &&callback);        // get-запрос
+        std::function<void(const drogon::HttpResponsePtr &)> &&callback);        // функция обработчика get-запроса
     
   private:
-        Json::Value loadConfig();
+        Json::Value loadConfig();                                                // загрузка конфигурации робота
 };
