@@ -126,6 +126,17 @@ class ActionSutilsTest: public ::testing::Test{
 };
 
 
+
+
+TEST_F(ActionSutilsTest, GetConfigMehJsonValues_FileExists_ReturnsJson){
+
+    Json::Value configMeh = actionSUtils::getConfigMehJsonValues("mehConfig.json");
+
+    ASSERT_FALSE(configMeh.empty());
+
+}
+
+
 TEST_F(ActionSutilsTest, CanShooting_InvalidPosition_ThrowsException){
 
     Json::Value configMeh = actionSUtils::getConfigMehJsonValues("test_mehConfig.json");
