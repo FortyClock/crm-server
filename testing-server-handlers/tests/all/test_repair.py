@@ -2,80 +2,46 @@ import os
 import requests
 import pytest_check as check
 
-# Уже стреляли (1 раз при тестах выстрелов) => можно
-# починить "Оружие" и "Орудийный манипулятор"
 
+def send_repair_request(id):
 
-# Должен быть ответ об успешной починке (починка требовалась) + 10% прочности
-def test_repair_post201():
-
-    server_url = os.getenv("SERVER_URL")
-    path = f"{server_url}/repair"
-
+    url = f"{os.getenv('SERVER_URL')}/repair"
     headers = {'Content-Type': 'application/json'}
-
-    dataSuccess = {
-        "id": "weapon_001" # сейчас у него 90%
-    }
-
-    assert requests.post(url=path, headers=headers, data=dataSuccess).status_code == 201
+    json = {"id": id}
+    response = requests.post(url, headers=headers, json=json)
+    return response
 
 
-# Успешное выполнение (починка не требовалась)
-def test_repair_post200():
+# успешная починка
+def test_repair_post_SuccessfulRepair():
 
-    server_url = os.getenv("SERVER_URL")
-    path = f"{server_url}/repair"
+    response = send_repair_request("grab_manip_001")
 
-    headers = {'Content-Type': 'application/json'}
+    assert response.status_code == 201
+    assert "message" in response.json()
+    assert response.json()["message"] == "Successful repair"
 
-    dataSuccess = {
-        "id": "gun_manip" # сейчас у него 100%
-    }
 
-    assert requests.post(url=path, headers=headers, data=dataSuccess).status_code == 200
+# Все дожны завершится успешно, так как это проверка на обработку неправильных запросов
+def test_repair_post_BadData_400():
+
+    response1 = send_repair_request(None) # не полные данные
+    response2 = send_repair_request("right_leg_001") # полная ёмкость (чинить нечего)
+    response3 = send_repair_request("grab_manip_001") # нет ремонтных наборов
+
+
+    check.equal(response1.status_code, 400)
+
+    check.equal(response2.status_code, 400)
+
+    check.equal(response3.status_code, 400)
 
 
 # По сути это проверка на то, все ли тесты unit-тесты работают корректно
 # (если тест не проходит, можно посмотреть, что ещё исправить внутри серверных функций)
-def test_shoot_post500():
+def test_repair_post_ServerError_NoErrors_5xx():
 
-    server_url = os.getenv("SERVER_URL")
-    path = f"{server_url}/repair"
-
-    headers = {'Content-Type': 'application/json'}
-
-    dataSuccess = {
-        "id": "left_leg"
-    }
-
-    response = requests.post(url=path, headers=headers, data=dataSuccess)
+    response = send_repair_request("right_leg_001")
 
     assert response.status_code not in [500, 501, 503], response.json()["error"]
-
-
-# Все дожны завершится успешно, так как это проверка на обработку неправильных запросов
-def test_repair_post4xx():
-
-    server_url = os.getenv("SERVER_URL")
-    path = f"{server_url}/repair"
-
-    headers = {'Content-Type': 'application/json'}
-
-
-    data_id_does_not_exist = {
-        "id": "sdfsd" # предмет не существует
-    }
-
-    data_no_repair_sets = {
-        "id": "gun_manip" # сейчас у него 95%, но нет рем. комплектов
-    }
-
-
-    check.equal(requests.post(url=path, headers=headers, 
-                              json=data_id_does_not_exist).status_code, 400)
-    
-    check.equal(requests.post(url=path, headers=headers, 
-                              json=data_no_repair_sets).status_code, 400)
-
 

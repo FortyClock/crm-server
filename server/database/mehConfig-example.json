@@ -139,20 +139,20 @@
 	{
 		"grab_manip" : 
 		{
-			"capacity" : 100,
-			"id" : "grab_manipulator_001"
+			"capacity" : 60,
+			"id" : "grab_manip_001"
 		},
 		"gun" : 
 		{
 			"capacity" : 100,
 			"cartridges" : 3,
-			"id" : "weapon_001"
+			"id" : "gun_001"
 		},
-		"gun_manip" :
+		"gun_manip" : 
 		{
-            "capacity": 100,
-            "id": "weapon_manipulator_001"
-        },
+			"capacity" : 90,
+			"id" : "gun_manip_001"
+		},
 		"left_leg" : 
 		{
 			"capacity" : 100,
@@ -162,7 +162,7 @@
 		{
 			"capacity" : 10,
 			"id" : "repair_unit_001",
-			"repair_kit_num" : 2
+			"repair_kit_num" : 1
 		},
 		"right_leg" : 
 		{

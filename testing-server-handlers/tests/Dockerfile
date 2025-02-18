@@ -8,5 +8,5 @@ COPY all .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["pytest", "test_shoot.py"]
+CMD pytest test_shoot.py && pytest test_repair.py
 #CMD ["pytest", "test_shoot.py", "test_repair.py"]

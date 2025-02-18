@@ -5,12 +5,22 @@
 
 namespace actionSUtils{
 
-    void canShooting(int x, int y, Json::Value& intelState);
-
     Json::Value getConfigMehJsonValues(const std::string& filename);
+
+    void rewriteJsonFile(const std::string& filename, const Json::Value& allData);
+
+
+
+    void canShooting(int x, int y, Json::Value& mehConfig);
 
     std::string shooting(int x, int y, Json::Value& mehConfig);
 
-    void rewriteJsonFile(const std::string& filename, const Json::Value& allData);
+
+
+    std::string findStateNameWithId(const std::string &id, Json::Value& RobotState);
+
+    void canRepairing(const std::string &id, Json::Value& RobotState);
+
+    void repairing(const std::string &id, Json::Value& mehConfig);
 
 }

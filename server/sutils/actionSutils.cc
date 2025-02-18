@@ -8,6 +8,47 @@
 
 namespace actionSUtils{
 
+    Json::Value getConfigMehJsonValues(const std::string& filename){
+    
+        Json::Value allData;
+    
+        std::ifstream configMehFile(
+            std::string(getenv("HOME")) + "/crm-server/server/database/" +
+            filename, std::ifstream::binary);
+        if(!configMehFile.is_open()){
+    
+            throw std::runtime_error("Can't open the file");
+        }
+    
+        configMehFile >> allData;
+    
+        configMehFile.close();
+        
+        if(allData.empty()){
+            throw std::runtime_error("File is empty");
+        }
+    
+        return allData;
+    
+    }
+
+    void rewriteJsonFile(const std::string& filename, const Json::Value& allData) {
+        
+        std::ofstream newMehConfigFile(
+            std::string(getenv("HOME")) + "/crm-server/server/database/" + filename);
+        if(newMehConfigFile.is_open()){
+    
+            newMehConfigFile << allData;
+            newMehConfigFile.close();
+        }
+        else{
+    
+            throw std::runtime_error("Can't open file for rewriting");
+        }
+    }    
+
+
+
     void canShooting(int x, int y, Json::Value& mehConfig){
 
         if(mehConfig["robot_state"]["torso"]["capacity"].asInt() <= 20){
@@ -30,6 +71,18 @@ namespace actionSUtils{
         }
     
         if(mehConfig["robot_state"]["gun_manip"]["capacity"].asInt() <= 20){
+
+            mehConfig["robot_state"]["gun_manip"] = "Empty";
+            
+            if(mehConfig["robot_state"]["torso"]["capacity"].asInt() <= 50){
+                
+                mehConfig["robot_state"]["torso"]["capacity"] = 0;
+            }
+            else{
+                
+                mehConfig["robot_state"]["torso"]["capacity"] =
+                    mehConfig["robot_state"]["torso"]["capacity"].asInt() - 50;
+            }
 
             throw std::logic_error("broke_gun_manip");
         }
@@ -57,30 +110,6 @@ namespace actionSUtils{
             
             throw std::logic_error("Looking doesn't match");
         }
-    
-    }
-    
-    Json::Value getConfigMehJsonValues(const std::string& filename){
-    
-        Json::Value allData;
-    
-        std::ifstream configMehFile(
-            std::string(getenv("HOME")) + "/crm-server/server/database/" +
-            filename, std::ifstream::binary);
-        if(!configMehFile.is_open()){
-    
-            throw std::runtime_error("Can't open the file");
-        }
-    
-        configMehFile >> allData;
-    
-        configMehFile.close();
-        
-        if(allData.empty()){
-            throw std::runtime_error("File is empty");
-        }
-    
-        return allData;
     
     }
     
@@ -115,20 +144,67 @@ namespace actionSUtils{
     
     }
     
-    void rewriteJsonFile(const std::string& filename, const Json::Value& allData) {
-        
-        std::ofstream newMehConfigFile(
-            std::string(getenv("HOME")) + "/crm-server/server/database/" + filename);
-        if(newMehConfigFile.is_open()){
     
-            newMehConfigFile << allData;
-            newMehConfigFile.close();
+
+    std::string findStateNameWithId(const std::string &id, Json::Value& RobotState){
+
+        size_t position = id.find_last_of('_');
+
+        if(position == std::string::npos){
+
+            throw std::logic_error("State (" + id + ") not found");
+        }
+
+        std::string stateName = id.substr(0, position);
+
+        if(RobotState[stateName].isNull() || RobotState[stateName] == "Empty"){
+
+            throw std::logic_error("State (" + id + ") not found");
+        }
+
+        return stateName;
+
+    }
+
+    void canRepairing(const std::string &id, Json::Value& RobotState){
+
+        if(RobotState["torso"]["capacity"] <= 20){
+
+            throw std::logic_error("Can't repair, torso is broke");
+        }
+
+        if(RobotState["repair_station"]["repair_kit_num"] <= 0){
+
+            throw std::logic_error("No repair kits");
+        }
+
+        std::string stateName = findStateNameWithId(id, RobotState);
+
+        if(RobotState[stateName]["capacity"] == 100){
+
+            throw std::logic_error("Capacity (" + id + ") is full");
+        }
+
+    }
+
+    void repairing(const std::string &id, Json::Value& mehConfig){
+
+        std::string stateName = findStateNameWithId(id, mehConfig["robot_state"]);
+        int stateCapacity = mehConfig["robot_state"][stateName]["capacity"].asInt();
+        int capacityWillRepaired = mehConfig["robot_state"]["repair_station"]["capacity"].asInt();
+
+        if(stateCapacity + capacityWillRepaired >= 100){
+            stateCapacity = 100;
         }
         else{
-    
-            throw std::runtime_error("Can't open file for rewriting");
+            stateCapacity += capacityWillRepaired;
         }
-    }    
+
+        mehConfig["robot_state"][stateName]["capacity"] = stateCapacity;
+        mehConfig["robot_state"]["repair_station"]["repair_kit_num"] = 
+            mehConfig["robot_state"]["repair_station"]["repair_kit_num"].asInt() - 1;
+
+    }
 
 }
 
