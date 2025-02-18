@@ -5,6 +5,9 @@
 #include <QJsonObject>
 #include <QDebug>
 #include <QNetworkReply>
+#include <QUrl>
+#include <QNetworkRequest>
+#include <QPainter>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,21 +15,24 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-
     networkManager = new QNetworkAccessManager(this);
-    serverUrl = QUrl("https://checkrobo4.free.beeceptor.com");
+    serverUrl = QUrl("http://localhost:3000/shoot");
+
+    // **Подключаем сигналы нажатия кнопок движения к слотам:**
+    connect(ui->moveForwardButton, &QPushButton::clicked, this, &MainWindow::moveForward);
+    connect(ui->moveBackwardButton, &QPushButton::clicked, this, &MainWindow::moveBackward);
+    connect(ui->moveLeftButton, &QPushButton::clicked, this, &MainWindow::moveLeft);
+    connect(ui->moveRightButton, &QPushButton::clicked, this, &MainWindow::moveRight);
+
     connect(ui->getStateButton, &QPushButton::clicked, this, &MainWindow::getState);
     connect(ui->repairButton, &QPushButton::clicked, this, &MainWindow::sendRepairRequest);
-    connect(ui->moveButton, &QPushButton::clicked, this, &MainWindow::sendMoveRequest);
-    connect(ui->turnButton, &QPushButton::clicked, this, &MainWindow::sendTurnRequest);
+    connect(ui->rotateLeftButton, &QPushButton::clicked, this, &MainWindow::rotateLeft);
+    connect(ui->rotateRightButton, &QPushButton::clicked, this, &MainWindow::rotateRight);
     connect(ui->shootButton, &QPushButton::clicked, this, &MainWindow::sendShootRequest);
     connect(ui->mapWidget, &QPushButton::clicked, this, &MainWindow::handleMapButtonClick); // Подключение для mapWidget
 
-    // Заполнение directionComboBox
-    ui->directionComboBox->addItem("N");
-    ui->directionComboBox->addItem("S");
-    ui->directionComboBox->addItem("W");
-    ui->directionComboBox->addItem("E");
+    xCoord =0;
+    yCoord =0;
 }
 
 MainWindow::~MainWindow()
@@ -86,14 +92,43 @@ void MainWindow::sendRepairRequest()
     });
 }
 
-void MainWindow::sendMoveRequest()
-{
+// **Реализуем слоты для кнопок движения:**
+void MainWindow::moveForward() {
+    sendMovementCommand("forward");
+}
+
+void MainWindow::moveBackward() {
+    sendMovementCommand("backward");
+}
+
+void MainWindow::moveLeft() {
+    sendMovementCommand("left");
+}
+
+void MainWindow::moveRight() {
+    sendMovementCommand("right");
+}
+
+void MainWindow::sendMovementCommand(const QString &direction) {
     QUrl url = serverUrl;
-    url.setPath("/position");
+    url.setPath("/position");  // Change path to /position
+
+    int newX = xCoord;
+    int newY = yCoord;
+
+    if (direction == "forward") {
+        newY += 1;
+    } else if (direction == "backward") {
+        newY -= 1;
+    } else if (direction == "left") {
+        newX -= 1;
+    } else if (direction == "right") {
+        newX += 1;
+    }
 
     QJsonObject json;
-    json["x"] = ui->xEdit->text().toInt();
-    json["y"] = ui->yEdit->text().toInt();
+    json["x"] = newX;
+    json["y"] = newY;
 
     QJsonDocument jsonDoc(json);
     QByteArray postData = jsonDoc.toJson();
@@ -105,21 +140,23 @@ void MainWindow::sendMoveRequest()
 
     connect(reply, &QNetworkReply::finished, this, [=]() {
         if (reply->error() == QNetworkReply::NoError) {
-            QMessageBox::information(this, "Success", "Move request sent");
+            //QMessageBox::information(this, "Success", "Move " + direction + " request sent");
+            // При успешном перемещении запрашиваем новое состояние
+            getState();
+
         } else {
-            QMessageBox::critical(this, "Error", "Move request failed: " + reply->errorString());
+            QMessageBox::critical(this, "Error", "Move " + direction + " request failed: " + reply->errorString());
         }
         reply->deleteLater();
     });
 }
 
-void MainWindow::sendTurnRequest()
-{
+void MainWindow::sendTurnCommand(const QString &direction) {
     QUrl url = serverUrl;
-    url.setPath("/turn");
+    url.setPath("/turn"); // Новый endpoint для поворота
 
     QJsonObject json;
-    json["face_to"] = ui->directionComboBox->currentText();
+    json["direction"] = direction; // Передаем направление поворота (left или right)
 
     QJsonDocument jsonDoc(json);
     QByteArray postData = jsonDoc.toJson();
@@ -128,14 +165,25 @@ void MainWindow::sendTurnRequest()
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     QNetworkReply *reply = networkManager->post(request, postData);
-    connect(reply, &QNetworkReply::finished, this,[=]() {
+
+    connect(reply, &QNetworkReply::finished, this, [=]() {
         if (reply->error() == QNetworkReply::NoError) {
-            QMessageBox::information(this, "Success", "Turn request sent");
+            QMessageBox::information(this, "Success", "Rotate " + direction + " request sent");
         } else {
-            QMessageBox::critical(this, "Error", "Turn request failed: " + reply->errorString());
+            QMessageBox::critical(this, "Error", "Rotate " + direction + " request failed: " + reply->errorString());
         }
         reply->deleteLater();
     });
+
+    getState(); // Обновляем состояние после поворота
+}
+void MainWindow::rotateLeft()
+{
+    sendTurnCommand("left");
+}
+void MainWindow::rotateRight()
+{
+    sendTurnCommand("right");
 }
 
 void MainWindow::sendShootRequest()
@@ -144,8 +192,6 @@ void MainWindow::sendShootRequest()
     url.setPath("/shoot");
 
     QJsonObject json;
-    json["x"] = ui->xEdit->text().toInt();
-    json["y"] = ui->yEdit->text().toInt();
 
     QJsonDocument jsonDoc(json);
     QByteArray postData = jsonDoc.toJson();
@@ -181,7 +227,20 @@ void MainWindow::parseState(const QJsonObject &json)
             ui->torsoProgressBar->setValue(torsoCapacity);
             qDebug() << "Torso capacity:" << torsoCapacity;
         }
+        if (robot.contains("intelligence") && robot["intelligence"].isObject()) {
+            QJsonObject intelligence = robot["intelligence"].toObject();
+            if (intelligence.contains("position") && intelligence["position"].isObject()) {
+                QJsonObject position = intelligence["position"].toObject();
+                xCoord = position["x"].toInt();
+                yCoord = position["y"].toInt();
 
+                ui->xEdit->setText(QString::number(xCoord));
+                ui->yEdit->setText(QString::number(yCoord));
+
+                // Обновляем карту после получения новых координат
+                getMap();
+            }
+        }
         if (robot.contains("repair_station") && robot["repair_station"].isObject()) {
             QJsonObject repairStation = robot["repair_station"].toObject();
             int repairStationCapacity = repairStation["capacity"].toInt();
@@ -230,15 +289,6 @@ void MainWindow::parseState(const QJsonObject &json)
             int rightLegCapacity = rightLeg["capacity"].toInt();
             ui->rightLegProgressBar->setValue(rightLegCapacity);
             qDebug() << "Right Leg capacity:" << rightLegCapacity;
-        }
-
-        // Обновление координат из локальных переменных
-        ui->xEdit->setText(QString::number(xCoord));
-        ui->yEdit->setText(QString::number(yCoord));
-
-        if (json.contains("intelligence") && json["intelligence"].isObject()) {
-            QJsonObject intelligence = json["intelligence"].toObject();
-            ui->directionComboBox->setCurrentText(intelligence["faced_to"].toString());
         }
 
         // Заполнение componentIdComboBox
@@ -315,11 +365,11 @@ void MainWindow::paintEvent(QPaintEvent *event)
     }
     painter.end();
 }
+
 void MainWindow::getMap()
 {
     QNetworkRequest request;
     request.setUrl(QUrl("https://qmaptest5.free.beeceptor.com/map"));
-    networkManager->get(request);
     QNetworkReply *reply = networkManager->get(request);
     connect(reply, &QNetworkReply::finished, this, [=]() {
         if (reply->error() == QNetworkReply::NoError)
@@ -340,7 +390,11 @@ void MainWindow::getMap()
         reply->deleteLater();
     });
 }
-int int_from_map(const std::string& map)
+
+
+//МАКСОН, ТУТ ТЕБЕ
+
+int MainWindow::int_from_map(const std::string& map)
 {
     for (int i = 0; i < std::size(map_items); i++)
     {
@@ -349,5 +403,3 @@ int int_from_map(const std::string& map)
     }
     return 10;
 }
-
-

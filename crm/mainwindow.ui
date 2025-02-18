@@ -17,14 +17,14 @@
    <widget class="QLabel" name="robotIdLabel">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>20</y>
+      <x>240</x>
+      <y>0</y>
       <width>66</width>
       <height>18</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>Robot ID</string>
     </property>
    </widget>
    <widget class="QProgressBar" name="torsoProgressBar">
@@ -183,75 +183,6 @@
      <string>Хватат. манип</string>
     </property>
    </widget>
-   <widget class="QLabel" name="xLabel">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>0</y>
-      <width>21</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>X:</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="xEdit">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>0</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="yLabel">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>20</y>
-      <width>21</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Y:</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="yEdit">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>20</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="directionLabel">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>10</y>
-      <width>101</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Направление</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="directionComboBox">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>0</y>
-      <width>41</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="repairStationLabel">
     <property name="geometry">
      <rect>
@@ -306,8 +237,8 @@
      <rect>
       <x>450</x>
       <y>50</y>
-      <width>141</width>
-      <height>261</height>
+      <width>131</width>
+      <height>121</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -322,20 +253,6 @@
       <widget class="QPushButton" name="repairButton">
        <property name="text">
         <string>Ремонт</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="moveButton">
-       <property name="text">
-        <string>Перемещене</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="turnButton">
-       <property name="text">
-        <string>Поворот</string>
        </property>
       </widget>
      </item>
@@ -381,6 +298,149 @@
      </item>
     </layout>
    </widget>
+   <widget class="QPushButton" name="moveForwardButton">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>210</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>^</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="moveLeftButton">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>220</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="moveRightButton">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>220</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="moveBackwardButton">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>230</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>v</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="moveLabel">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>190</y>
+      <width>91</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Движение</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="turnLabel">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>190</y>
+      <width>91</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Поворот</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="rotateLeftButton">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>220</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="rotateRightButton">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>220</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="CurrentPositionLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>270</y>
+      <width>151</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Текущее положение:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="xEdit">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>270</y>
+      <width>21</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>x</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="yEdit">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>270</y>
+      <width>21</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>y</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -397,4 +457,3 @@
  <resources/>
  <connections/>
 </ui>
-
