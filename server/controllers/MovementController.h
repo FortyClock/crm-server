@@ -15,9 +15,19 @@ class MovementController : public drogon::HttpController<MovementController>
       "/position",
       drogon::Post
     );
+
+    ADD_METHOD_TO(
+      MovementController::postTurn,
+      "/turn",
+      drogon::Post
+    );
+
     
     METHOD_LIST_END
     
     void postPosition(const drogon::HttpRequestPtr &req,
         std::function<void(const drogon::HttpResponsePtr &)> &&callback);
+
+    void postTurn(const drogon::HttpRequestPtr &req,
+        std::function<void(const drogon::HttpResponsePtr &)> &&callback);    
 };
