@@ -146,7 +146,7 @@ def test_map_get_Success_and_Not404_And500():
     assert response.status_code != 500
     assert response.status_code == 200
     assert "status" in response.json() and response.json()["status"] == "success"
-    assert "data" in response.json() and response.jaon()["data"] == data
+    assert "data" in response.json() and response.json()["data"] == data
 
 
 

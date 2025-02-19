@@ -49,18 +49,9 @@ def test_shoot_post_BadData_400():
     check.equal(response3.status_code, 400)
 
 
-# По сути это проверка на то, все ли тесты unit-тесты работают корректно
-# (если тест не проходит, можно посмотреть, что ещё исправить внутри серверных функций)
-def test_shoot_post_ServerError_NoErrors_5xx():
-
-    response = send_shoot_request(2, 3)
-
-    assert response.status_code not in [500, 501, 503], response.json()["error"]
-
-
 def test_shoot_post_NoCartriges_400():
 
     response = send_shoot_request(2, 3)
 
-    assert response.status_code == 400 and response.json()["error"] == "no cartridges"
+    assert response.status_code == 400 and response.json()["message"] == "no cartridges"
 
