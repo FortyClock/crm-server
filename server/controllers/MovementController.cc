@@ -10,12 +10,11 @@ void MovementController ::postPosition(const drogon::HttpRequestPtr &req,
     try
     {
         auto requestBody = req->getJsonObject();
-
-        // Проверка что запрос не пустой
-        if (!requestBody || !requestBody->isMember("x") || !requestBody->isMember("y")) 
-        {
+        
+        // Проверка что пришла позиция меха
+        if (!requestBody || !requestBody->isMember("x") || !requestBody->isMember("y")) {
             jsonBody["status"] = "error";
-            jsonBody["message"] = "Body is required";
+            jsonBody["message"] = "Fields 'x' and 'y' are required";
             auto response = HttpResponse::newHttpJsonResponse(jsonBody);
             response->setStatusCode(HttpStatusCode::k400BadRequest);
             callback(response);
