@@ -35,9 +35,7 @@ namespace movementSutils{
            (x - xPosition != 0 && abs(y - yPosition) > 1))
             throw std::logic_error("Not a neighboring cell!")
 
-        // ошибка если позиция вне карты
+        // ошибка если позиция вне карты РАБОТА ВЕДЕТСЯ
         
-    
-    
     }
 }
