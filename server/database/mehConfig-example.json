@@ -1,7 +1,7 @@
 {
 	"intelligence_inf" : 
 	{
-		"faced_to" : "W",
+		"faced_to" : "E",
 		"position" : 
 		{
 			"x" : 3,
@@ -145,7 +145,7 @@
 		"gun" : 
 		{
 			"capacity" : 100,
-			"cartridges" : 2,
+			"cartridges" : 6,
 			"id" : "gun_001"
 		},
 		"gun_manip" : 
@@ -162,7 +162,7 @@
 		{
 			"capacity" : 10,
 			"id" : "repair_unit_001",
-			"repair_kit_num" : 1
+			"repair_kit_num" : 6
 		},
 		"right_leg" : 
 		{
