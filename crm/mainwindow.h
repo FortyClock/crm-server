@@ -31,20 +31,13 @@ public:
 private slots:
     void getState();
     void sendRepairRequest();
+    void sendMoveRequest();
+    void sendTurnRequest();
     void sendShootRequest();
-    void sendMovementCommand(const QString &direction);
-    void sendTurnCommand(const QString &direction);
     void parseState(const QJsonObject &json);
     void handleMapButtonClick();
     void paintEvent(QPaintEvent *event) override;
     void getMap();
-    void moveForward();
-    void moveBackward();
-    void moveLeft();
-    void moveRight();
-    void rotateLeft();
-    void rotateRight();
-    int int_from_map(const std::string& map);
 
 private:
     Ui::MainWindow *ui;
