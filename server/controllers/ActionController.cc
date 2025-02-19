@@ -19,7 +19,8 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
     if(!reqBody || !reqBody->isMember("x") || !reqBody->isMember("y")){
 
         Json::Value err;
-        err["error"] = "Empty data";
+        err["status"] = "error";
+        err["message"] = "Empty data";
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(err);
         response->setStatusCode(drogon::HttpStatusCode::k400BadRequest);
@@ -48,14 +49,16 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
 
         if(std::string(e.what()) == "broke_gun_manip"){
 
-            err["error"] = "Gun manipulator broke";
+            err["status"] = "error";
+            err["message"] = "Gun manipulator broke";
 
             sutils::rewriteJsonFile("mehConfig-example.json", mehConfig);
 
         }
         else{
 
-            err["error"] = e.what();
+            err["status"] = "error";
+            err["message"] = e.what();
         }
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(err);
