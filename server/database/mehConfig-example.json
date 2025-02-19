@@ -145,7 +145,7 @@
 		"gun" : 
 		{
 			"capacity" : 100,
-			"cartridges" : 3,
+			"cartridges" : 2,
 			"id" : "gun_001"
 		},
 		"gun_manip" : 
