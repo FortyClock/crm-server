@@ -8,13 +8,13 @@
 
 using namespace actionSUtils;
 
-// НЕ ЗАВЕРШЁН
+
 void ActionController::shoot(const drogon::HttpRequestPtr &req,
     std::function<void(const drogon::HttpResponsePtr &)> &&callback){
 
     auto reqBody = (*req).getJsonObject();
 
-    if(!reqBody){
+    if(!reqBody || !reqBody->isMember("x") || !reqBody->isMember("y")){
 
         Json::Value err;
         err["error"] = "Empty data";
@@ -28,15 +28,12 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
     }
 
 
-    int x = -1, y = -1;
+    int x = reqBody->get("x", -2).asInt();
+    int y = reqBody->get("y", -2).asInt();
     Json::Value mehConfig = {};
 
     try
     {
-
-        x = reqBody->get("x", -2).asInt();
-        y = reqBody->get("y", -2).asInt();
-
 
         mehConfig = actionSUtils::getConfigMehJsonValues("mehConfig-example.json");
 
@@ -47,15 +44,10 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
     {
         Json::Value err;
 
-        if(x < 0 || y < 0){
-
-            err["error"] = "Empty data";
-        }
-        else if(std::string(e.what()) == "broke_gun_manip"){
+        if(std::string(e.what()) == "broke_gun_manip"){
 
             err["error"] = "Gun manipulator broke";
 
-            mehConfig["robot_state"]["gun_manip"] = "Empty";
             actionSUtils::rewriteJsonFile("mehConfig-example.json", mehConfig);
 
         }
@@ -113,7 +105,76 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
 void ActionController::repair(const drogon::HttpRequestPtr &req,
     std::function<void(const drogon::HttpResponsePtr &)> &&callback){
 
-    
+    auto reqBody = (*req).getJsonObject();
+
+    if(!reqBody || !reqBody->isMember("id")){
+
+        Json::Value err;
+        err["error"] = "Empty data";
+
+        auto response = drogon::HttpResponse::newHttpJsonResponse(err);
+        response->setStatusCode(drogon::HttpStatusCode::k400BadRequest);
+
+        callback(response);
+        return;
+
+    }
+
+    std::string id = reqBody->get("id", "Empty").asString();
+    Json::Value mehConfig = {};
+
+    try
+    {
+
+        mehConfig = actionSUtils::getConfigMehJsonValues("mehConfig-example.json");
+
+        actionSUtils::canRepairing(id, mehConfig["robot_state"]);
+
+    }
+    catch(const std::exception& e)
+    {
+
+        Json::Value err;
+        err["error"] = e.what();
+
+        auto response = drogon::HttpResponse::newHttpJsonResponse(err);
+        response->setStatusCode(drogon::HttpStatusCode::k400BadRequest);
+
+        callback(response);
+        return;
+
+    }
+
+
+    try
+    {
+        actionSUtils::repairing(id, mehConfig);
+
+        actionSUtils::rewriteJsonFile("mehConfig-example.json", mehConfig);
+
+        Json::Value resp;
+        resp["message"] = "Successful repair";
+
+        auto response = drogon::HttpResponse::newHttpJsonResponse(resp);
+        response->setStatusCode(drogon::HttpStatusCode::k201Created);
+
+        callback(response);
+        return;
+
+    }
+    catch(const std::exception& e)
+    {
+
+        Json::Value err;
+        err["error"] = e.what();
+
+        auto response = drogon::HttpResponse::newHttpJsonResponse(err);
+        response->setStatusCode(drogon::HttpStatusCode::k500InternalServerError);
+
+        callback(response);
+        return;
+
+    }
     
 }
 

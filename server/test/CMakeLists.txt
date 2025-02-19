@@ -37,6 +37,7 @@ include_directories(
     ${googletest_SOURCE_DIR}/googletest/include
     ${googletest_SOURCE_DIR}/googletest
     ../sutils
+    test
     ${jsoncpp_INCLUDE_DIRS}
 )
 
@@ -48,6 +49,9 @@ include_directories(
 add_executable(
     utils_test # название проекта с тестами (есть в начале этого файла)
     test_main.cc
+    testClass.cc
+    test_actionSutilsShooting.cc
+    teso_actionSutilsRepairing.cc
     ../sutils/actionSutils.cc
 )
 
