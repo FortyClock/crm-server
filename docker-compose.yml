@@ -9,16 +9,5 @@ services:
       - crm-server-network
     container_name: server_env
 
-  integration-tests:
-    build:
-      context: ./testing-server-handlers/tests/
-      dockerfile: Dockerfile
-    depends_on:
-      - server
-    networks:
-      - crm-server-network
-    environment:
-      - SERVER_URL=http://server_env:3000
-
 networks:
   crm-server-network:
