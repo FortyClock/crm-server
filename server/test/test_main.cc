@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "../sutils/actionSutils.h"
+#include "../sutils/sutils.h"
 #include "testClass.h"
 
 #include <cstdlib>

@@ -2,6 +2,7 @@
 #include <jsoncpp/json/json.h>
 
 #include "../sutils/actionSutils.h"
+#include "../sutils/sutils.h"
 
 
 class ActionSutilsTest: public ::testing::Test{

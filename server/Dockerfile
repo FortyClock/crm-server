@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     uuid-dev \
     zlib1g-dev \
+    tree \
     && rm -rf /var/lib/apt/lists/*
     # последняя команда удаляет кэш списка пакетов, доступных в репозиториях APT.
 
@@ -73,5 +74,5 @@ RUN make
 
 
 # Запускаем unit-тесты и сервер
-CMD cd /root/crm-server/server/build && ./test/utils_test && ./server
+CMD tree && cd /root/crm-server/server/build && ./test/utils_test && ./server
 

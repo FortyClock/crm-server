@@ -1,32 +1,15 @@
 #include "StateController.h"
+#include "sutils.h"
 #include "jsoncpp/json/json.h"
 #include <iostream>
 #include <fstream>
-
-Json::Value StateController::loadConfig()
-{   
-    Json::Value config;
-    std::ifstream configFile("../database/mehConfig.json");
-
-    if(configFile.is_open()){
-        configFile >> config;
-        configFile.close();
-    } 
-    
-    else {
-        std::cerr << "Error: Unable to open config file!" << std::endl;
-        config["error"] = "Unable to open config file!";
-    }
-
-    return config;
-}
 
 void StateController::getState(const drogon::HttpRequestPtr &req,
     std::function<void(const drogon::HttpResponsePtr &)> &&callback){
 
     try
     {
-        Json::Value config = loadConfig();    // конфигурация меха
+        Json::Value config = sutils::getConfigMehJsonValues();    // конфигурация меха
 
         // ошибка, если RobotState или IntelligenceState не найдены в конфигурации меха
         if(!config.isMember("RobotState") || !config.isMember("IntelligenceState")){

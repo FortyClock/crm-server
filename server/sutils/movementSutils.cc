@@ -7,23 +7,6 @@
 
 namespace movementSutils{
 
-    Json::Value getConfigMehJsonValues(const std::string& filename){
-
-        Json::Value allData;
-
-        std::ifstream configFile("../database/mehConfig.json");
-
-        if(configFile.is_open()){
-            configFile >> allData;
-            configFile.close();
-        } else {
-                std::cerr << "Error: Unable to open config file!" << std::endl;
-                allData["error"] = "Unable to open config file!";
-        }
-
-        return allData;
-    }
-
     void canMove(int x, int y, Json::Value allData){
 
         // берем текущую позицию робота    

@@ -1,4 +1,5 @@
 #include "MovementController.h"
+#include "sutils.h"
 #include "jsoncpp/json/json.h"
 #include <iostream>
 

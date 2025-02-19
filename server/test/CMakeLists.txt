@@ -53,6 +53,7 @@ add_executable(
     test_actionSutilsShooting.cc
     teso_actionSutilsRepairing.cc
     ../sutils/actionSutils.cc
+    ../sutils/sutils.cc
 )
 
 

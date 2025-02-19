@@ -1,12 +1,14 @@
 #include "ActionController.h"
 
 #include "actionSutils.h"
+#include "sutils.h"
 #include <jsoncpp/json/json.h>
 
 #include <iostream>
 #include <fstream>
 
 using namespace actionSUtils;
+using namespace sutils;
 
 
 void ActionController::shoot(const drogon::HttpRequestPtr &req,
@@ -35,7 +37,7 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
     try
     {
 
-        mehConfig = actionSUtils::getConfigMehJsonValues("mehConfig-example.json");
+        mehConfig = sutils::getConfigMehJsonValues("mehConfig-example.json");
 
         actionSUtils::canShooting(x, y, mehConfig);
 
@@ -48,7 +50,7 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
 
             err["error"] = "Gun manipulator broke";
 
-            actionSUtils::rewriteJsonFile("mehConfig-example.json", mehConfig);
+            sutils::rewriteJsonFile("mehConfig-example.json", mehConfig);
 
         }
         else{
@@ -70,7 +72,7 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
         Json::Value resp;
         resp["message"] = actionSUtils::shooting(x, y, mehConfig);
 
-        actionSUtils::rewriteJsonFile("mehConfig-example.json", mehConfig);
+        sutils::rewriteJsonFile("mehConfig-example.json", mehConfig);
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(resp);
         if(resp["message"] == "Shot"){
@@ -126,7 +128,7 @@ void ActionController::repair(const drogon::HttpRequestPtr &req,
     try
     {
 
-        mehConfig = actionSUtils::getConfigMehJsonValues("mehConfig-example.json");
+        mehConfig = sutils::getConfigMehJsonValues("mehConfig-example.json");
 
         actionSUtils::canRepairing(id, mehConfig["robot_state"]);
 
@@ -150,7 +152,7 @@ void ActionController::repair(const drogon::HttpRequestPtr &req,
     {
         actionSUtils::repairing(id, mehConfig);
 
-        actionSUtils::rewriteJsonFile("mehConfig-example.json", mehConfig);
+        sutils::rewriteJsonFile("mehConfig-example.json", mehConfig);
 
         Json::Value resp;
         resp["message"] = "Successful repair";

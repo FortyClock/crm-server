@@ -19,6 +19,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize=undefined"
 set(SRC_FILES
     main.cc
     sutils/actionSutils.cc
+    sutils/sutils.cc
     controllers/StateController.cc
     controllers/MapController.cc
     controllers/MovementController.cc

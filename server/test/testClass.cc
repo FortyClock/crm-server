@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "testClass.h"
 #include "../sutils/actionSutils.h"
+#include "../sutils/sutils.h"
 
 #include <cstdlib>
 #include <jsoncpp/json/json.h>
