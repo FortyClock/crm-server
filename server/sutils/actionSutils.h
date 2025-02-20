@@ -11,8 +11,6 @@ namespace actionSUtils{
 
     std::string shooting(int x, int y, Json::Value& mehConfig);
 
-
-
     std::string findStateNameWithId(const std::string &id, Json::Value& RobotState);
 
     void canRepairing(const std::string &id, Json::Value& RobotState);

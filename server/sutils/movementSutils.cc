@@ -13,8 +13,8 @@ namespace movementSutils{
         int mapSize = allData["map"]["size"].asInt();
 
         // берем текущую позицию робота    
-        int xPosition = allData["intelligence_inf"]["position"]["y"].asInt();
-        int yPosition = allData["intelligence_inf"]["position"]["x"].asInt();
+        int xPosition = allData["intelligence_inf"]["position"]["x"].asInt();
+        int yPosition = allData["intelligence_inf"]["position"]["y"].asInt();
 
 
         // ошибка если не верно указана позиция
@@ -24,4 +24,11 @@ namespace movementSutils{
                 throw std::logic_error("The position is wrong");
         
     }
+
+    void moving(int x, int y, Json::Value& mehConfig){
+
+        mehConfig["intelligence_inf"]["position"]["x"] = x;
+        mehConfig["intelligence_inf"]["position"]["y"] = y;
+    }
+
 }
