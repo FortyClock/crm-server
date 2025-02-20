@@ -77,10 +77,10 @@ void MovementController ::postPosition(const drogon::HttpRequestPtr &req,
     }
     catch(const std::exception& e)
     {
-        Json::Value err;
-        err["error"] = e.what();
+        jsonBody["status"]  = "error";
+        jsonBody["message"] = e.what();
 
-        auto response = drogon::HttpResponse::newHttpJsonResponse(err);
+        auto response = drogon::HttpResponse::newHttpJsonResponse(jsonBody);
         response->setStatusCode(drogon::HttpStatusCode::k500InternalServerError);
 
         callback(response);
