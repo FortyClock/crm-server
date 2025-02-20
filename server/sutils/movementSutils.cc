@@ -20,7 +20,8 @@ namespace movementSutils{
         // ошибка если не верно указана позиция
         if((abs(x - xPosition) > 1 && y - yPosition != 0) ||
            (x - xPosition != 0 && abs(y - yPosition) > 1) ||
-           (x >= mapSize || y >= mapSize))
+           (x >= mapSize || y >= mapSize) ||
+           (x < 0 || y < 0))
                 throw std::logic_error("The position is wrong");
         
     }
