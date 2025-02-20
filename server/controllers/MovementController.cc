@@ -29,8 +29,6 @@ void MovementController ::postPosition(const drogon::HttpRequestPtr &req,
 
     jsonBody["status"]  = "ok";
     jsonBody["message"] = "Position received";
-    //auto response = HttpResponse::newHttpJsonResponse(jsonBody);
-    //callback(response);
 
     Json::Value mehConfig;
 
@@ -41,10 +39,8 @@ void MovementController ::postPosition(const drogon::HttpRequestPtr &req,
     }
 
     catch(const std::exception& e)
-    {
-        
+    {       
         if(std::string(e.what()) == "The position is wrong"){
-
 
             jsonBody["status"]  = "error";
             jsonBody["message"] = "The position is wrong";
@@ -66,7 +62,6 @@ void MovementController ::postPosition(const drogon::HttpRequestPtr &req,
 
     try
     {
-        //Json::Value resp;
         movementSutils::moving(x, y, mehConfig);
 
         sutils::rewriteJsonFile("mehConfig-example.json", mehConfig);
@@ -90,8 +85,7 @@ void MovementController ::postPosition(const drogon::HttpRequestPtr &req,
 
         callback(response);
         return;
-    }
-    
+    }   
 }
 
 
