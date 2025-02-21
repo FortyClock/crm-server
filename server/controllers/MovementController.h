@@ -15,9 +15,20 @@ class MovementController : public drogon::HttpController<MovementController>
       "/position",
       drogon::Post
     );
+
+    // Поворт на 90 градусов
+    ADD_METHOD_TO(
+      MovementController::postTurn,
+      "/turn",
+      drogon::Post
+    );
         
     METHOD_LIST_END
     
+    
     void postPosition(const drogon::HttpRequestPtr &req,
         std::function<void(const drogon::HttpResponsePtr &)> &&callback);
+
+    void postTurn(const drogon::HttpRequestPtr &req,
+      std::function<void(const drogon::HttpResponsePtr &)> &&callback);
 };
