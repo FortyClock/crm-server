@@ -13,7 +13,7 @@ using namespace sutils;
 
 TEST_F(ActionSutilsTest, GetConfigMehJsonValues_FileExists_ReturnsJson){
 
-    Json::Value configMeh = sutils::getConfigMehJsonValues("mehConfig.json");
+    Json::Value configMeh = sutils::getConfigMehJsonValues("test_mehConfig.json");
 
     ASSERT_FALSE(configMeh.empty());
 

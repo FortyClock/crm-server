@@ -3,27 +3,153 @@ import requests
 import pytest_check as check
 
 
-def test_get_map_200():
+def send_map_request():
 
-    server_url = os.getenv("SERVER_URL")
-    path = f"{server_url}/map"
+    url = f"{os.getenv('SERVER_URL')}/map"
+    headers = {'Content-Type': 'application/json'}
+    response = requests.get(url, headers=headers)
+    return response
 
-    response = requests.get(url=path)
 
+def test_map_get_Success_and_Not404_And500():
+
+    data = {
+		"items" : [
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			],
+			[
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty",
+				"Empty"
+			]
+		],
+		"size" : 10
+	}
+
+
+    response = send_map_request()
+
+    assert response.status_code != 404
+    assert response.status_code != 500
     assert response.status_code == 200
+    assert "status" in response.json() and response.json()["status"] == "success"
+    assert "data" in response.json() and response.json()["data"] == data
 
-    json = response.json()
 
-    assert "map" in json
 
-    assert all(item in ["Empty", "Enemy"] for item in json["map"])
 
-def test_get_map_500():
-    
-    server_url = os.getenv("SERVER_URL")
-    path = f"{server_url}/map"
 
-    response = requests.get(url=path)
-
-    assert response.status_code not in [500, 501, 503], response.json()["error"]
 
