@@ -34,8 +34,7 @@ namespace movementSutils{
         std::string facedTo = allData["intelligence_inf"]["faced_to"].asString();
 
         if((turn == "N" && facedTo == "S" || turn == "S" && facedTo == "N") || 
-            (turn == "W" && facedTo == "E" || turn == "E" && facedTo == "W") /*||
-            (turn != "W" || turn != "E" || turn != "S" || turn != "N")*/)
+            (turn == "W" && facedTo == "E" || turn == "E" && facedTo == "W"))
             throw std::logic_error("The turn is wrong");
     }
 

@@ -51,7 +51,7 @@ void MovementController :: postPosition(const drogon::HttpRequestPtr &req,
         }
         else{
 
-            jsonBody["status"] = e.what();
+            jsonBody["message"] = e.what();
         }
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(jsonBody);
@@ -110,9 +110,6 @@ void MovementController :: postTurn(const drogon::HttpRequestPtr &req,
 
     std::string turn  = requestBody->get("faced_to", "").asString();
     std::cout << turn << std::endl;
-
-    //jsonBody["status"]  = "ok";
-    //jsonBody["message"] = "the turn was recived";
 
     Json::Value mehConfig;
 
