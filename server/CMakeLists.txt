@@ -20,6 +20,7 @@ set(SRC_FILES
     main.cc
     sutils/actionSutils.cc
     sutils/sutils.cc
+    sutils/movementSutils.cc
     controllers/StateController.cc
     controllers/MapController.cc
     controllers/MovementController.cc
