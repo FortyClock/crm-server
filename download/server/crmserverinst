@@ -58,17 +58,15 @@ cmake .. || { echo -e  "\033[31merror in BUILD SERVER (CRM-SERVER) 'cmake ..' er
 make || { echo -e  "\033[31merror in BUILD SERVER (CRM-SERVER) 'make ..' error \033[0m"; exit 1; }
 
 
+echo " "
+echo "\033[32mRun this command after finish instalation 'source ~/.bashrc'\033[0m"
 
-echo -e "\033[33mRUN SERVER UNIT-TESTS...\033[0m"
-./test/utils_test || { echo -e "\033[31merror in RUN SERVER UNIT-TESTS\033[0m"; exit 1; }
+echo "\033[33mYou can run this folowing commands to add SERVER BINARY FILE and "
+echo "UNIT-TESTS BINARY FILE in any directory like 'server' and 'utils_test':"
 
-
-
-echo -e "\033[33mMAKE SERVER ENV PATHE FOR BINARY SERVER FILE...\033[0m"
-echo "export PATH=\"$(echo $HOME)/crm-server/server/build:\$PATH\"" >> ~/.bashrc
+echo 'echo "export PATH=\"$(echo $HOME)/crm-server/server/build:\$PATH\"" >> ~/.bashrc'
+echo 'echo "export PATH=\"$(echo $HOME)/crm-server/server/build/test:\$PATH\"" >> ~/.bashrc\033[0m'
 
 
 echo -e "\033[32mINSTALLATION WAS FINISHED SUCCESSFULY...\033[0m"
-echo " "
-echo -e "\033[32mYou can run server use command 'server' in any directory.\033[0m"
 
