@@ -10,13 +10,13 @@
 #include <QPainter>
 
 MainWindow::MainWindow(QWidget *parent)
-    :QMainWindow(parent)
+    : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     networkManager = new QNetworkAccessManager(this);
-    serverUrl = QUrl("http://192.168.0.104:3000");
+    serverUrl = QUrl("http://localhost:3000");
 
     // **Подключаем сигналы нажатия кнопок движения к слотам:**
     connect(ui->moveForwardButton, &QPushButton::clicked, this, &MainWindow::moveForward);
@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->mapWidget, &QPushButton::clicked, this, &MainWindow::handleMapButtonClick); // Подключение для mapWidget
     getState();
 }
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -86,7 +87,6 @@ void MainWindow::sendRepairRequest()
             QMessageBox::critical(this, "Error", "Repair request failed: " + reply->errorString());
         }
         getState();
-        getMap();
         reply->deleteLater();
     });
 }
@@ -116,21 +116,21 @@ void MainWindow::sendMovementCommand(const QString &direction) {
     int newY = yCoord;
 
     if (direction == "forward") {
-        newY -= 1;
-    } else if (direction == "backward") {
         newY += 1;
+    } else if (direction == "backward") {
+        newY -= 1;
     } else if (direction == "left") {
         newX -= 1;
     } else if (direction == "right") {
         newX += 1;
     }
+
     QJsonObject json;
     json["x"] = newX;
     json["y"] = newY;
 
     QJsonDocument jsonDoc(json);
     QByteArray postData = jsonDoc.toJson();
-    qDebug() << json;
 
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -139,10 +139,13 @@ void MainWindow::sendMovementCommand(const QString &direction) {
 
     connect(reply, &QNetworkReply::finished, this, [=]() {
         if (reply->error() == QNetworkReply::NoError) {
+            //QMessageBox::information(this, "Success", "Move " + direction + " request sent");
+            // При успешном перемещении запрашиваем новое состояние
+            getState();
+
         } else {
             QMessageBox::critical(this, "Error", "Move " + direction + " request failed: " + reply->errorString());
         }
-        getState();
         reply->deleteLater();
     });
 }
@@ -152,46 +155,35 @@ void MainWindow::sendTurnCommand(const QString &direction) {
     url.setPath("/turn"); // Новый endpoint для поворота
 
     QJsonObject json;
-    json["faced_to"] = direction; // Передаем направление поворота (left или right)
+    json["enum"] = direction; // Передаем направление поворота (left или right)
 
     QJsonDocument jsonDoc(json);
     QByteArray postData = jsonDoc.toJson();
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-    qDebug() << "JSON POST: " << jsonDoc.toJson(QJsonDocument::Compact);
-
     QNetworkReply *reply = networkManager->post(request, postData);
 
     connect(reply, &QNetworkReply::finished, this, [=]() {
         if (reply->error() == QNetworkReply::NoError) {
-            //QMessageBox::information(this, "Success", "Rotate " + direction + " request sent");
+            QMessageBox::information(this, "Success", "Rotate " + direction + " request sent");
         } else {
             QMessageBox::critical(this, "Error", "Rotate " + direction + " request failed: " + reply->errorString());
         }
-    getState(); // Обновляем состояние после поворота
         reply->deleteLater();
     });
+
+    getState(); // Обновляем состояние после поворота
 }
 void MainWindow::rotateLeft()
 {
-    int directionIndex = int_from_direction(direction);
-    if (directionIndex == 0)
-    {
-        directionIndex = 4;
-    }
-    sendTurnCommand(QString::fromStdString(direction_items[directionIndex-1]));
+    //пока пусто
 }
 void MainWindow::rotateRight()
 {
-    int directionIndex = int_from_direction(direction);
-    if (directionIndex == 3)
-    {
-        directionIndex = -1;
-    }
-    sendTurnCommand(QString::fromStdString(direction_items[directionIndex+1]));
-
+    //пока пусто
 }
+
 void MainWindow::sendShootRequest()
 {
     QUrl url = serverUrl;
@@ -202,17 +194,17 @@ void MainWindow::sendShootRequest()
     {
     case 0: //North
         json["x"] = xCoord;
-        json["y"] = yCoord - (ui->shootComboBox->currentText()).toInt();
-        break;
-    case 2: //South
-        json["x"] = xCoord;
         json["y"] = yCoord + (ui->shootComboBox->currentText()).toInt();
         break;
-    case 3: //West
-        json["x"] = xCoord  - (ui->shootComboBox->currentText()).toInt();
+    case 1: //South
+        json["x"] = xCoord;
+        json["y"] = yCoord - (ui->shootComboBox->currentText()).toInt();
+        break;
+    case 2: //West
+        json["x"] = xCoord - (ui->shootComboBox->currentText()).toInt();
         json["y"] = yCoord;
         break;
-    case 1: //East
+    case 3: //East
         json["x"] = xCoord + (ui->shootComboBox->currentText()).toInt();
         json["y"] = yCoord;
         break;
@@ -265,6 +257,7 @@ void MainWindow::parseState(const QJsonObject &json)
                 ui->yEdit->setText(QString::number(yCoord));
 
                 qDebug() << "Updated Coordinates: X=" << xCoord << ", Y=" << yCoord;
+
                 // Обновляем карту после получения новых координат
                 getMap();
             } else {
@@ -355,30 +348,30 @@ void MainWindow::paintEvent(QPaintEvent *event)
                 break;
             case 2:
                 QPolygon polygon;
-                switch(int_from_direction(direction))
+            switch(int_from_direction(direction))
                 {
                 case 0: //North
                     polygon << QPoint(x + x_rect/2, y) << QPoint(x,y+y_rect) << QPoint(x + x_rect, y + y_rect);
                     painter.setPen(Qt::blue);
                     painter.drawPolygon(polygon);
                     break;
-                case 2: //South
+                case 1: //South
                     polygon << QPoint(x + x_rect/2, y + y_rect) << QPoint(x, y) << QPoint(x + x_rect, y);
                     painter.setPen(Qt::blue);
                     painter.drawPolygon(polygon);
                     break;
-                case 3: //West
+                case 2: //West
                     polygon << QPoint(x, y + y_rect/2) << QPoint(x + x_rect, y ) << QPoint(x + x_rect, y + y_rect);
                     painter.setPen(Qt::blue);
                     painter.drawPolygon(polygon);
                     break;
-                case 1: //East
+                case 3: //East
                     polygon << QPoint(x + x_rect, y + y_rect/2) << QPoint(x, y) << QPoint(x, y + y_rect);
                     painter.setPen(Qt::blue);
                     painter.drawPolygon(polygon);
                     break;
                 }
-                break;
+            break;
 
             }
         }
@@ -386,7 +379,6 @@ void MainWindow::paintEvent(QPaintEvent *event)
     if(i == 0) {
         painter.drawText(45,320,"НАЖМИТЕ НА КНОПКУ КАРТА");
     }
-    painter.end();
 }
 
 void MainWindow::getMap()
@@ -403,14 +395,13 @@ void MainWindow::getMap()
             QJsonObject rootObject = root.object(); // root - это ваш QJsonDocument
             QJsonObject dataObject = rootObject.value("data").toObject();
             QJsonArray itemsArray = dataObject.value("items").toArray();
-            qDebug() << itemsArray;
 
             if (xCoord >= 0 && xCoord < itemsArray.size()) {
-                QJsonArray rowArray = itemsArray.at(yCoord).toArray();
+                QJsonArray rowArray = itemsArray.at(xCoord).toArray();
 
                 if (yCoord >= 0 && yCoord < rowArray.size()) {
-                    rowArray[xCoord] = QJsonValue("Bot"); // Используем оператор [] для изменения элемента
-                    itemsArray[yCoord] = rowArray;       // Заменяем строку в массиве itemsArray
+                    rowArray[yCoord-1] = QJsonValue("Bot"); // Используем оператор [] для изменения элемента
+                    itemsArray[xCoord-1] = rowArray;       // Заменяем строку в массиве itemsArray
                     dataObject["items"] = itemsArray;       // Заменяем массив items в объекте data
                     rootObject["data"] = dataObject;       // Заменяем объект data в корневом объекте
 
@@ -418,20 +409,18 @@ void MainWindow::getMap()
                 }
                 QJsonObject map = (rootObject.value("data")).toObject();
                 jsonMap = (map.value("items")).toArray();
-                qDebug() << jsonMap;
-            }
-            else
-            {
-                QMessageBox::critical(this, "Error", "Network error: " + reply->errorString());
-            }
-            repaint();
-            reply->deleteLater();
         }
+        else
+        {
+            QMessageBox::critical(this, "Error", "Network error: " + reply->errorString());
+        }
+        reply->deleteLater();
+    }
     });
 }
 
 
-
+//МАКСОН, ТУТ ТЕБЕ
 
 int int_from_map(const std::string& map)
 {
