@@ -27,9 +27,6 @@ if(NOT jsoncpp_FOUND)
     message(FATAL_ERROR "JsonCpp not found")
 endif()
 
-message(STATUS "jsoncpp_INCLUDE_DIRS: ${jsoncpp_INCLUDE_DIRS}")
-message(STATUS "jsoncpp_LIBRARIES: ${jsoncpp_LIBRARIES}")
-
 
 # Добавляет в сборку пути к заголовочным файлам из проекта (в которых находятся функции,
 # которые нужно протестировать)

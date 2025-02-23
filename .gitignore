@@ -1,6 +1,12 @@
 
 # gihub files
 
+#client pathes
+crm/
+
+# docker files
+docker-compose.yml
+
 # "database" dir
 server/database/mehConfig.json
 
