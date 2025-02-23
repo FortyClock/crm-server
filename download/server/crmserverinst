@@ -4,7 +4,7 @@ echo -e "\033[33mUPDATE AND INSTALL PACKEGES...\033[0m"
 apt-get update && apt-get install -y \
     build-essential cmake wget unzip \
     libjsoncpp-dev uuid-dev zlib1g-dev || \
-    (echo -e  "\033[31merror in UPDATE AND INSTALL PACKEGES\033[0m" && exit 1)
+    { echo -e  "\033[31merror in UPDATE AND INSTALL PACKEGES\033[0m"; exit 1; }
 
 
 
@@ -27,46 +27,46 @@ source ~/.bashrc
 
 
 echo -e "\033[33mINSTALL DROGON FROM GIT REPOSITORY...\033[0m"
-echo "\033[33mcd /opt\033[0m"
+echo -e "\033[33mcd /opt\033[0m"
 cd /opt
-echo "\033[33mls\033[0m"
+echo -e "\033[33mls\033[0m"
 ls
 echo -e "\033[33mCLONE DROGON REPOSITORY...\033[0m"
 git clone https://github.com/drogonframework/drogon || \
-    {echo -e  "\033[31merror in CLONE DROGON REPOSITORY\033[0m"; exit 1;}
+    { echo -e "\033[31merror in CLONE DROGON REPOSITORY\033[0m"; exit 1; }
 
-echo "\033[33mcd drogon\033[0m"
+echo -e "\033[33mcd drogon\033[0m"
 cd drogon
 echo -e "\033[33mUPDATE DROGON SUBMODULES...\033[0m"
 (git submodule update --init) || \
-    {echo -e  "\033[31merror in UPDATE DROGON SUBMODULES\033[0m"; exit 1;}
+    { echo -e  "\033[31merror in UPDATE DROGON SUBMODULES\033[0m"; exit 1; }
 
 echo -e "\033[33mBUILD AND INSTALL DROGON...\033[0m"
 mkdir build
 cd build
 (cmake .. && make && make install) || \
-    {echo -e  "\033[31merror in INSTALL DROGON\033[0m"; exit 1;}
+    { echo -e  "\033[31merror in INSTALL DROGON\033[0m"; exit 1; }
 
 
 
 echo -e "\033[33mMAKE SERVER (CRM-SERVER) BUILD DIR...\033[0m"
-echo "\033[33mmkdir /crm-server/server/build\033[0m"
+echo -e  "\033[33mmkdir /crm-server/server/build\033[0m"
 mkdir "$HOME/crm-server/server/build"
-echo "\033[33mcd /crm-server/server/build\033[0m"
+echo -e  "\033[33mcd /crm-server/server/build\033[0m"
 cd "$HOME/crm-server/server/build"
 echo -e "\033[33mBUILD SERVER (CRM-SERVER)...\033[0m"
-cmake .. || {echo -e  "\033[31merror in BUILD SERVER (CRM-SERVER) 'cmake ..' error "; exit 1;}
-make || {echo -e  "\033[31merror in BUILD SERVER (CRM-SERVER) 'make ..' error \033[0m"; exit 1;}
+cmake .. || { echo -e  "\033[31merror in BUILD SERVER (CRM-SERVER) 'cmake ..' error "; exit 1; }
+make || { echo -e  "\033[31merror in BUILD SERVER (CRM-SERVER) 'make ..' error \033[0m"; exit 1; }
 
 
 
 echo -e "\033[33mRUN SERVER UNIT-TESTS...\033[0m"
-./test/utils_test || {echo -e "\033[31merror in RUN SERVER UNIT-TESTS\033[0m"; exit 1;}
+./test/utils_test || { echo -e "\033[31merror in RUN SERVER UNIT-TESTS\033[0m"; exit 1; }
 
 
 
 echo -e "\033[33mMAKE SERVER ENV PATHE FOR BINARY SERVER FILE...\033[0m"
-echo "export PATH=\"$HOME/crm-server/server/build:$PATH\"" >> ~/.bashrc
+echo -e  "export PATH=\"$HOME/crm-server/server/build:$PATH\"" >> ~/.bashrc
 source ~/.bashrc
 
 
