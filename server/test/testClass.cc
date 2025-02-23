@@ -12,8 +12,8 @@ using namespace actionSUtils;
 
 void ActionSutilsTest::SetUp(){
 
-    std::string filepath = std::string(getenv("HOME")) +
-        "/crm-server/server/database/test_mehConfig.json";
+    std::string filepath = std::string(getenv("CRM_SERVER_DB_DIR")) +
+        "test_mehConfig.json";
     std::ofstream configFile(filepath);
     if(configFile.is_open()){
         configFile << R"({
@@ -92,16 +92,16 @@ void ActionSutilsTest::SetUp(){
 
 void ActionSutilsTest::TearDown(){
 
-    std::string filepath = std::string(getenv("HOME")) +
-        "/crm-server/server/database/test_mehConfig.json";
+    std::string filepath = std::string(getenv("CRM_SERVER_DB_DIR")) +
+        "test_mehConfig.json";
     std::remove(filepath.c_str());
 
 }
 
 Json::Value ActionSutilsTest::loadTestConfig(){
 
-    std::string filepath = std::string(getenv("HOME")) +
-        "/crm-server/server/database/test_mehConfig.json";
+    std::string filepath = std::string(getenv("CRM_SERVER_DB_DIR")) +
+        "test_mehConfig.json";
     Json::Value config;
     std::ifstream configFile(filepath);
     if(configFile.is_open()){

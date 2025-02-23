@@ -11,15 +11,6 @@ using namespace actionSUtils;
 using namespace sutils;
 
 
-/*TEST_F(ActionSutilsTest, GetConfigMehJsonValues_FileExists_ReturnsJson){
-
-    Json::Value configMeh = sutils::getConfigMehJsonValues("test_mehConfig.json");
-
-    ASSERT_FALSE(configMeh.empty());
-
-}
-*/
-
 TEST_F(ActionSutilsTest, CanShooting_InvalidPosition_ThrowsException){
 
     Json::Value configMeh = sutils::getConfigMehJsonValues("test_mehConfig.json");
