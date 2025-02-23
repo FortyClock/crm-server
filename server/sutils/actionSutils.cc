@@ -50,8 +50,8 @@ namespace actionSUtils{
     
     
         Json::Value intelInf = mehConfig["intelligence_inf"];
-        int xPosition = intelInf["position"]["y"].asInt();
-        int yPosition = intelInf["position"]["x"].asInt();
+        int xPosition = intelInf["position"]["x"].asInt();
+        int yPosition = intelInf["position"]["y"].asInt();
 
     
         // та же позиция или не в пределах карты и не в 3х клетках от меха
