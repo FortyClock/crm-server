@@ -22,7 +22,7 @@ rm -rf "$HOME/crm-server/.dockerignore"
 echo -e "\033[33mMAKE SERVER ENV PATHES...\033[0m"
 echo "export CRM_SERVER_CONFIG_DIR=\"$HOME/crm-server/server/config-example.json\"" >> ~/.bashrc
 echo "export CRM_SERVER_DB_DIR=\"$HOME/crm-server/server/database/\"" >> ~/.bashrc
-source ~/.bashrc
+source ~/.bashrc || { echo "\033[31mSave SERVER ENV PATHES (source ~/.bashrc)...\033[0m"; exit 1; }
 
 
 
