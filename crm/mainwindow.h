@@ -32,11 +32,11 @@ private slots:
     void getState();
     void sendRepairRequest();
     void sendShootRequest();
+    void paintEvent(QPaintEvent *);
     void sendMovementCommand(const QString &direction);
     void sendTurnCommand(const QString &direction);
     void parseState(const QJsonObject &json);
     void handleMapButtonClick();
-    void paintEvent(QPaintEvent *event) override;
     void getMap();
     void moveForward();
     void moveBackward();
@@ -50,18 +50,24 @@ private:
     QNetworkAccessManager *networkManager;
     QUrl serverUrl;
     QJsonDocument document;
-    QJsonArray jsonMap;
     int mapSize;
+    QJsonArray jsonMap;
     std::string direction;
 
     // Локальные переменные для хранения координат
     int xCoord = 0;
     int yCoord = 0;
+
+    QString getNextDirection (const QString &currentDir);
+    QString getPreviousDirection (const QString &currentDir);
+    QString getNextOpposite (const QString &currentDir);
+    QString currentDirection = "N";
 };
 const std::string map_items[] { "Empty", "Enemy", "Bot"};
-const std::string direction_items[] {"N", "S", "W", "E"};
+const std::string direction_items[] {"N", "E", "S", "W"};
 const QString componentId[] {"gun_manip_001", "gun_001", "torso_001", "grab_manip_001", "left_leg_001", "right_leg_001"};
 int int_from_map(const std::string& map);
 int int_from_direction(const std::string& direction);
 
 #endif // MAINWINDOW_H
+
