@@ -57,11 +57,6 @@ private:
     // Локальные переменные для хранения координат
     int xCoord = 0;
     int yCoord = 0;
-
-    QString getNextDirection (const QString &currentDir);
-    QString getPreviousDirection (const QString &currentDir);
-    QString getNextOpposite (const QString &currentDir);
-    QString currentDirection = "N";
 };
 const std::string map_items[] { "Empty", "Enemy", "Bot"};
 const std::string direction_items[] {"N", "E", "S", "W"};
