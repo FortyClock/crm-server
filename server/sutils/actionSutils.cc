@@ -53,6 +53,7 @@ namespace actionSUtils{
         int xPosition = intelInf["position"]["x"].asInt();
         int yPosition = intelInf["position"]["y"].asInt();
         int size = mehConfig["map"]["size"].asInt();
+        
 
     
         // та же позиция или не в пределах карты и не в 3х клетках от меха
