@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     networkManager = new QNetworkAccessManager(this);
-    serverUrl = QUrl("http://192.168.0.104:3000");
+    serverUrl = QUrl("http://localhost:3000");
 
     // **Подключаем сигналы нажатия кнопок движения к слотам:**
     connect(ui->moveForwardButton, &QPushButton::clicked, this, &MainWindow::moveForward);
