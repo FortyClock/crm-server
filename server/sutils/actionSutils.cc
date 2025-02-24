@@ -57,7 +57,7 @@ namespace actionSUtils{
     
         // та же позиция или не в пределах карты и не в 3х клетках от меха
         if((xPosition == x && yPosition == y) || 
-            (x < 0 || x > size) || (y < 0 || y > size) ||
+            (x < 0 || x >=  size) || (y < 0 || y >= size) ||
             (abs(x - xPosition) > 3 || abs(y - yPosition) > 3)){
     
             throw std::logic_error("Invalid position");
