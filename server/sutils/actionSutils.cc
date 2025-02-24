@@ -55,7 +55,7 @@ namespace actionSUtils{
 
     
         // та же позиция или не в пределах карты и не в 3х клетках от меха
-        if((yPosition == x && xPosition == y) || 
+        if((yPosition == y && xPosition == x) || 
             (x < 0 || x > 9) || (y < 0 || y > 9) ||
             (abs(x - xPosition) > 3 || abs(y - yPosition) > 3)){
     
