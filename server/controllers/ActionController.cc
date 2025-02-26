@@ -38,7 +38,7 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
     try
     {
 
-        mehConfig = sutils::getConfigMehJsonValues("mehConfig-example.json");
+        mehConfig = sutils::getConfigMehJsonValues();
 
         actionSUtils::canShooting(x, y, mehConfig);
 
@@ -52,7 +52,7 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
             err["status"] = "error";
             err["message"] = "Gun manipulator broke";
 
-            sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
+            sutils::rewriteConfigMehJsonFile(mehConfig);
 
         }
         else{
@@ -76,7 +76,7 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
         resp["status"] = "success";
         resp["message"] = actionSUtils::shooting(x, y, mehConfig);
 
-        sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
+        sutils::rewriteConfigMehJsonFile(mehConfig);
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(resp);
         if(resp["message"] == "Shot"){
@@ -134,7 +134,7 @@ void ActionController::repair(const drogon::HttpRequestPtr &req,
     try
     {
 
-        mehConfig = sutils::getConfigMehJsonValues("mehConfig-example.json");
+        mehConfig = sutils::getConfigMehJsonValues();
 
         actionSUtils::canRepairing(id, mehConfig["robot_state"]);
 
@@ -159,7 +159,7 @@ void ActionController::repair(const drogon::HttpRequestPtr &req,
     {
         actionSUtils::repairing(id, mehConfig);
 
-        sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
+        sutils::rewriteConfigMehJsonFile(mehConfig);
 
         Json::Value resp;
         resp["status"] = "success";

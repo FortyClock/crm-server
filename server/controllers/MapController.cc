@@ -5,7 +5,7 @@
 void MapController::getMap(const drogon::HttpRequestPtr &req,
     std::function<void(const drogon::HttpResponsePtr &)> &&callback){
     
-    Json::Value mehConfig = sutils::getConfigMehJsonValues("mehConfig-example.json");
+    Json::Value mehConfig = sutils::getConfigMehJsonValues();
     
     if(!mehConfig.isMember("map")){
         Json::Value errorResponse;

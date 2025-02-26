@@ -1,0 +1,19 @@
+#!/bin/bash
+
+apt-get update && apt-get install -y \
+    libc6 \
+    build-essential \
+    cmake \
+    git \
+    wget \
+    unzip \
+    libjsoncpp-dev \
+    libssl-dev \
+    uuid-dev \
+    zlib1g-dev \
+    libyaml-cpp-dev \
+    libpq-dev \
+    libmariadb-dev
+
+echo -e "\033[32mINSTALLATION WAS FINISHED SUCCESSFULY...\033[0m"
+

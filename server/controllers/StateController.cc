@@ -9,7 +9,7 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
 
     try
     {
-        Json::Value config = sutils::getConfigMehJsonValues("mehConfig-example.json");    // конфигурация меха
+        Json::Value config = sutils::getConfigMehJsonValues();    // конфигурация меха
 
         // ошибка, если RobotState или IntelligenceState не найдены в конфигурации меха
         if(!config.isMember("robot_state") || !config.isMember("intelligence_inf")){
