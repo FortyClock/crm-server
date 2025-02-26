@@ -10,8 +10,9 @@ server/database/mehConfig.json
 #project enviromental config files
 server/config.json
 
-#build dirs
+#build
 server/build/
+server/br.sh
 
 #vscode dirs
 .vscode/

@@ -65,5 +65,8 @@ target_link_libraries(
 )
 
 
+install(TARGETS ${PROJECT_NAME} DESTINATION /usr/bin)
+include(CPack)
+
 # Отключаем find_package(GTest REQUIRED) т.к. GTest теперь подключается через FetchContent
 #find_package(GTest REQUIRED)

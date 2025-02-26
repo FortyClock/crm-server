@@ -57,3 +57,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon)
 
 
 add_subdirectory(test)
+
+
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER DM)
+set(CPACK_GENERATOR "DEB")
+set(CPACK_PACKAGE_HOMEPAGE_URL https://github.com/FortyClock/crm-server.git)
+set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+install(TARGETS ${PROJECT_NAME} DESTINATION /usr/bin)
+
+include(CPack)

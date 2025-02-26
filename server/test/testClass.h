@@ -7,14 +7,14 @@
 
 class ActionSutilsTest: public ::testing::Test{
 
+    public:
+        Json::Value getTMPMehConfigFile();
 
     protected:
 
         void SetUp() override;
 
         void TearDown() override;
-
-        Json::Value loadTestConfig();
     
 };
 

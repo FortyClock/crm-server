@@ -35,7 +35,7 @@ void MovementController :: postPosition(const drogon::HttpRequestPtr &req,
     // возможно ли перемещение
     try
     {
-        mehConfig = sutils::getConfigMehJsonValues("mehConfig-example.json");
+        mehConfig = sutils::getConfigMehJsonValues();
         movementSutils::canMove(x,y, mehConfig);
     }
 
@@ -46,7 +46,7 @@ void MovementController :: postPosition(const drogon::HttpRequestPtr &req,
             jsonBody["status"]  = "error";
             jsonBody["message"] = "The position is wrong";
 
-            sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
+            sutils::rewriteConfigMehJsonFile(mehConfig);
 
         }
         else{
@@ -66,7 +66,7 @@ void MovementController :: postPosition(const drogon::HttpRequestPtr &req,
     {
         movementSutils::moving(x, y, mehConfig);
 
-        sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
+        sutils::rewriteConfigMehJsonFile(mehConfig);
 
         jsonBody["status"]  = "ok";
         jsonBody["message"] = "The position was changed";
@@ -116,7 +116,7 @@ void MovementController :: postTurn(const drogon::HttpRequestPtr &req,
     // возможен ли поворот
     try
     {
-        mehConfig = sutils::getConfigMehJsonValues("mehConfig-example.json");
+        mehConfig = sutils::getConfigMehJsonValues();
         movementSutils::canTurn(turn, mehConfig);
     }
 
@@ -127,7 +127,7 @@ void MovementController :: postTurn(const drogon::HttpRequestPtr &req,
             jsonBody["status"]  = "error";
             jsonBody["message"] = "The turn is wrong";
 
-            sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
+            sutils::rewriteConfigMehJsonFile(mehConfig);
 
         }
         else{
@@ -146,7 +146,7 @@ void MovementController :: postTurn(const drogon::HttpRequestPtr &req,
     {
         movementSutils::turning(turn, mehConfig);
 
-        sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
+        sutils::rewriteConfigMehJsonFile(mehConfig);
 
         jsonBody["status"]  = "ok";
         jsonBody["message"] = "Robot turned";
@@ -163,7 +163,7 @@ void MovementController :: postTurn(const drogon::HttpRequestPtr &req,
             jsonBody["status"]  = "error";
             jsonBody["message"] = "The turn is wrong";
 
-            sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
+            sutils::rewriteConfigMehJsonFile(mehConfig);
 
         }
         else{

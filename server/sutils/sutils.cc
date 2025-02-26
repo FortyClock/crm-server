@@ -2,17 +2,18 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 
 #include <jsoncpp/json/json.h>
 
 namespace sutils{
 
-    Json::Value getConfigMehJsonValues(const std::string& filename){
+    Json::Value getConfigMehJsonValues(){
     
         Json::Value allData;
     
         std::ifstream configMehFile(
-            std::string(getenv("CRM_SERVER_DB_DIR")) + filename,
+            std::string(getenv("CRM_SERVER_DB_DIR")),
             std::ifstream::binary);
         if(!configMehFile.is_open()){
     
@@ -31,10 +32,10 @@ namespace sutils{
     
     }
 
-    void rewriteConfigMehJsonFile(const std::string& filename, const Json::Value& allData) {
+    void rewriteConfigMehJsonFile(const Json::Value& allData) {
         
         std::ofstream newMehConfigFile(
-            std::string(getenv("CRM_SERVER_DB_DIR")) + filename);
+            std::string(getenv("CRM_SERVER_DB_DIR")));
         if(newMehConfigFile.is_open()){
     
             newMehConfigFile << allData;

@@ -5,8 +5,8 @@
 
 namespace sutils{
 
-    Json::Value getConfigMehJsonValues(const std::string& filename);
+    Json::Value getConfigMehJsonValues();
 
-    void rewriteConfigMehJsonFile(const std::string& filename, const Json::Value& allData);
+    void rewriteConfigMehJsonFile(const Json::Value& allData);
 
 }
