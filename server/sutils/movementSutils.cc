@@ -44,13 +44,6 @@ namespace movementSutils{
         int xPosition = mehConfig["intelligence_inf"]["position"]["x"].asInt();
         int yPosition = mehConfig["intelligence_inf"]["position"]["y"].asInt();
 
-<<<<<<< HEAD
-        /*if (mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20)
-            throw std::logic_error("low left leg capicity");
-
-        if (mehConfig["robot_state"]["right_leg"]["capacity"].asInt() <= 20)
-            throw std::logic_error("low right leg capicity");*/
-
         if (mehConfig["robot_state"]["torso"]["capacity"].asInt() <= 20)
             throw std::logic_error("low torso capicity");
 
@@ -58,13 +51,6 @@ namespace movementSutils{
         std::string facedTo = mehConfig["intelligence_inf"]["faced_to"].asString();
 
 
-=======
-        if (mehConfig["robot_state"]["torso"]["capacity"].asInt() <= 20)
-            throw std::logic_error("low torso capicity");
-
-        std::string facedTo = mehConfig["intelligence_inf"]["faced_to"].asString();
-
->>>>>>> main
         if(facedTo == "N" || facedTo == "S"){
             if(xPosition == x){ // движение вперед или назад
                 if(mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20 || mehConfig["robot_state"]["right_leg"]["capacity"].asInt() <= 20){
@@ -133,6 +119,7 @@ namespace movementSutils{
 
         // Уменьшение прочности торса при любом движении
         mehConfig["robot_state"]["torso"]["capacity"] = mehConfig["robot_state"]["torso"]["capacity"].asInt() - 1;
+
 
         mehConfig["intelligence_inf"]["position"]["x"] = x;
         mehConfig["intelligence_inf"]["position"]["y"] = y;
