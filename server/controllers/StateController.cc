@@ -23,10 +23,14 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
             return;
         }
 
+<<<<<<< HEAD
         // извлекаем RobotState и IntelligenceState 
 
         // извлекаем RobotState и IntelligenceState
 
+=======
+        // извлекаем RobotState и IntelligenceState
+>>>>>>> main
         Json::Value robotState = config["robot_state"];
         Json::Value intelligenceState = config["intelligence_inf"];
 

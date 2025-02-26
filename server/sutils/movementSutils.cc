@@ -44,6 +44,7 @@ namespace movementSutils{
         int xPosition = mehConfig["intelligence_inf"]["position"]["x"].asInt();
         int yPosition = mehConfig["intelligence_inf"]["position"]["y"].asInt();
 
+<<<<<<< HEAD
         /*if (mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20)
             throw std::logic_error("low left leg capicity");
 
@@ -57,6 +58,13 @@ namespace movementSutils{
         std::string facedTo = mehConfig["intelligence_inf"]["faced_to"].asString();
 
 
+=======
+        if (mehConfig["robot_state"]["torso"]["capacity"].asInt() <= 20)
+            throw std::logic_error("low torso capicity");
+
+        std::string facedTo = mehConfig["intelligence_inf"]["faced_to"].asString();
+
+>>>>>>> main
         if(facedTo == "N" || facedTo == "S"){
             if(xPosition == x){ // движение вперед или назад
                 if(mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20 || mehConfig["robot_state"]["right_leg"]["capacity"].asInt() <= 20){

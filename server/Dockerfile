@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:24.04
 
 
 
@@ -63,6 +63,9 @@ WORKDIR /root/crm-server/server/build
 
 # Указываем CMake, где искать JsonCpp
 ENV CMAKE_PREFIX_PATH=/usr
+
+ENV CRM_SERVER_DB_DIR=/root/crm-server/server/database/
+ENV CRM_SERVER_CONFIG_DIR=/root/crm-server/server/config-example.json
 
 
 # Собираем проект с помощью CMake

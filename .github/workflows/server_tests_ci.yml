@@ -2,9 +2,7 @@ name: CI/CD for server
 
 on:
   push:
-    branches: [action-controller]
-  pull_request:
-    branches: [main]
+    branches: [map-controller]
 
 jobs:
   build:

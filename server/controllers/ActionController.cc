@@ -19,7 +19,8 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
     if(!reqBody || !reqBody->isMember("x") || !reqBody->isMember("y")){
 
         Json::Value err;
-        err["error"] = "Empty data";
+        err["status"] = "error";
+        err["message"] = "Empty data";
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(err);
         response->setStatusCode(drogon::HttpStatusCode::k400BadRequest);
@@ -48,14 +49,16 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
 
         if(std::string(e.what()) == "broke_gun_manip"){
 
-            err["error"] = "Gun manipulator broke";
+            err["status"] = "error";
+            err["message"] = "Gun manipulator broke";
 
-            sutils::rewriteJsonFile("mehConfig-example.json", mehConfig);
+            sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
 
         }
         else{
 
-            err["error"] = e.what();
+            err["status"] = "error";
+            err["message"] = e.what();
         }
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(err);
@@ -70,9 +73,10 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
     {
         
         Json::Value resp;
+        resp["status"] = "success";
         resp["message"] = actionSUtils::shooting(x, y, mehConfig);
 
-        sutils::rewriteJsonFile("mehConfig-example.json", mehConfig);
+        sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(resp);
         if(resp["message"] == "Shot"){
@@ -90,7 +94,8 @@ void ActionController::shoot(const drogon::HttpRequestPtr &req,
     {
 
         Json::Value err;
-        err["error"] = e.what();
+        err["status"] = "error";
+        err["message"] = e.what();
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(err);
         response->setStatusCode(drogon::HttpStatusCode::k500InternalServerError);
@@ -112,7 +117,8 @@ void ActionController::repair(const drogon::HttpRequestPtr &req,
     if(!reqBody || !reqBody->isMember("id")){
 
         Json::Value err;
-        err["error"] = "Empty data";
+        err["status"] = "error";
+        err["message"] = "Empty data";
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(err);
         response->setStatusCode(drogon::HttpStatusCode::k400BadRequest);
@@ -137,7 +143,8 @@ void ActionController::repair(const drogon::HttpRequestPtr &req,
     {
 
         Json::Value err;
-        err["error"] = e.what();
+        err["status"] = "error";
+        err["message"] = e.what();
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(err);
         response->setStatusCode(drogon::HttpStatusCode::k400BadRequest);
@@ -152,9 +159,10 @@ void ActionController::repair(const drogon::HttpRequestPtr &req,
     {
         actionSUtils::repairing(id, mehConfig);
 
-        sutils::rewriteJsonFile("mehConfig-example.json", mehConfig);
+        sutils::rewriteConfigMehJsonFile("mehConfig-example.json", mehConfig);
 
         Json::Value resp;
+        resp["status"] = "success";
         resp["message"] = "Successful repair";
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(resp);
@@ -168,7 +176,8 @@ void ActionController::repair(const drogon::HttpRequestPtr &req,
     {
 
         Json::Value err;
-        err["error"] = e.what();
+        err["status"] = "error";
+        err["message"] = e.what();
 
         auto response = drogon::HttpResponse::newHttpJsonResponse(err);
         response->setStatusCode(drogon::HttpStatusCode::k500InternalServerError);

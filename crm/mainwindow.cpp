@@ -5,30 +5,33 @@
 #include <QJsonObject>
 #include <QDebug>
 #include <QNetworkReply>
+#include <QUrl>
+#include <QNetworkRequest>
+#include <QPainter>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    :QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-
     networkManager = new QNetworkAccessManager(this);
-    serverUrl = QUrl("https://checkrobo4.free.beeceptor.com");
+    serverUrl = QUrl("http://localhost:3000");
+
+    // **Подключаем сигналы нажатия кнопок движения к слотам:**
+    connect(ui->moveForwardButton, &QPushButton::clicked, this, &MainWindow::moveForward);
+    connect(ui->moveBackwardButton, &QPushButton::clicked, this, &MainWindow::moveBackward);
+    connect(ui->moveLeftButton, &QPushButton::clicked, this, &MainWindow::moveLeft);
+    connect(ui->moveRightButton, &QPushButton::clicked, this, &MainWindow::moveRight);
+
     connect(ui->getStateButton, &QPushButton::clicked, this, &MainWindow::getState);
     connect(ui->repairButton, &QPushButton::clicked, this, &MainWindow::sendRepairRequest);
-    connect(ui->moveButton, &QPushButton::clicked, this, &MainWindow::sendMoveRequest);
-    connect(ui->turnButton, &QPushButton::clicked, this, &MainWindow::sendTurnRequest);
+    connect(ui->rotateLeftButton, &QPushButton::clicked, this, &MainWindow::rotateLeft);
+    connect(ui->rotateRightButton, &QPushButton::clicked, this, &MainWindow::rotateRight);
     connect(ui->shootButton, &QPushButton::clicked, this, &MainWindow::sendShootRequest);
     connect(ui->mapWidget, &QPushButton::clicked, this, &MainWindow::handleMapButtonClick); // Подключение для mapWidget
-
-    // Заполнение directionComboBox
-    ui->directionComboBox->addItem("N");
-    ui->directionComboBox->addItem("S");
-    ui->directionComboBox->addItem("W");
-    ui->directionComboBox->addItem("E");
+    getState();
 }
-
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -66,8 +69,8 @@ void MainWindow::sendRepairRequest()
     url.setPath("/repair");
 
     QJsonObject json;
-    json["id"] = ui->componentIdComboBox->currentText(); // Используем первый ComboBox
-
+    json["id"] = componentId[(ui->componentIdComboBox->currentIndex())];
+    qDebug() << json;
     QJsonDocument jsonDoc(json);
     QByteArray postData = jsonDoc.toJson();
 
@@ -82,21 +85,52 @@ void MainWindow::sendRepairRequest()
         } else {
             QMessageBox::critical(this, "Error", "Repair request failed: " + reply->errorString());
         }
+        getState();
+        getMap();
         reply->deleteLater();
     });
 }
 
-void MainWindow::sendMoveRequest()
-{
-    QUrl url = serverUrl;
-    url.setPath("/position");
+// **Реализуем слоты для кнопок движения:**
+void MainWindow::moveForward() {
+    sendMovementCommand("forward");
+}
 
+void MainWindow::moveBackward() {
+    sendMovementCommand("backward");
+}
+
+void MainWindow::moveLeft() {
+    sendMovementCommand("left");
+}
+
+void MainWindow::moveRight() {
+    sendMovementCommand("right");
+}
+
+void MainWindow::sendMovementCommand(const QString &direction) {
+    QUrl url = serverUrl;
+    url.setPath("/position");  // Change path to /position
+
+    int newX = xCoord;
+    int newY = yCoord;
+
+    if (direction == "forward") {
+        newY -= 1;
+    } else if (direction == "backward") {
+        newY += 1;
+    } else if (direction == "left") {
+        newX -= 1;
+    } else if (direction == "right") {
+        newX += 1;
+    }
     QJsonObject json;
-    json["x"] = ui->xEdit->text().toInt();
-    json["y"] = ui->yEdit->text().toInt();
+    json["x"] = newX;
+    json["y"] = newY;
 
     QJsonDocument jsonDoc(json);
     QByteArray postData = jsonDoc.toJson();
+    qDebug() << json;
 
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -105,99 +139,157 @@ void MainWindow::sendMoveRequest()
 
     connect(reply, &QNetworkReply::finished, this, [=]() {
         if (reply->error() == QNetworkReply::NoError) {
-            QMessageBox::information(this, "Success", "Move request sent");
         } else {
-            QMessageBox::critical(this, "Error", "Move request failed: " + reply->errorString());
+            QMessageBox::critical(this, "Error", "Move " + direction + " request failed: " + reply->errorString());
         }
+        getState();
         reply->deleteLater();
     });
 }
 
-void MainWindow::sendTurnRequest()
-{
+void MainWindow::sendTurnCommand(const QString &direction) {
     QUrl url = serverUrl;
-    url.setPath("/turn");
+    url.setPath("/turn"); // Новый endpoint для поворота
 
     QJsonObject json;
-    json["face_to"] = ui->directionComboBox->currentText();
+    json["faced_to"] = direction; // Передаем направление поворота (left или right)
 
     QJsonDocument jsonDoc(json);
     QByteArray postData = jsonDoc.toJson();
-
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
+    qDebug() << "JSON POST: " << jsonDoc.toJson(QJsonDocument::Compact);
+
     QNetworkReply *reply = networkManager->post(request, postData);
-    connect(reply, &QNetworkReply::finished, this,[=]() {
+
+    connect(reply, &QNetworkReply::finished, this, [=]() {
         if (reply->error() == QNetworkReply::NoError) {
-            QMessageBox::information(this, "Success", "Turn request sent");
+            //QMessageBox::information(this, "Success", "Rotate " + direction + " request sent");
         } else {
-            QMessageBox::critical(this, "Error", "Turn request failed: " + reply->errorString());
+            QMessageBox::critical(this, "Error", "Rotate " + direction + " request failed: " + reply->errorString());
         }
+    getState(); // Обновляем состояние после поворота
         reply->deleteLater();
     });
 }
+void MainWindow::rotateLeft()
+{
+    int directionIndex = int_from_direction(direction);
+    if (directionIndex == 0)
+    {
+        directionIndex = 4;
+    }
+    sendTurnCommand(QString::fromStdString(direction_items[directionIndex-1]));
+}
+void MainWindow::rotateRight()
+{
+    int directionIndex = int_from_direction(direction);
+    if (directionIndex == 3)
+    {
+        directionIndex = -1;
+    }
+    sendTurnCommand(QString::fromStdString(direction_items[directionIndex+1]));
 
+}
 void MainWindow::sendShootRequest()
 {
     QUrl url = serverUrl;
     url.setPath("/shoot");
 
     QJsonObject json;
-    json["x"] = ui->xEdit->text().toInt();
-    json["y"] = ui->yEdit->text().toInt();
+    switch(int_from_direction(direction))
+    {
+    case 0: //North
+        json["x"] = xCoord;
+        json["y"] = yCoord - (ui->shootComboBox->currentText()).toInt();
+        break;
+    case 2: //South
+        json["x"] = xCoord;
+        json["y"] = yCoord + (ui->shootComboBox->currentText()).toInt();
+        break;
+    case 3: //West
+        json["x"] = xCoord  - (ui->shootComboBox->currentText()).toInt();
+        json["y"] = yCoord;
+        break;
+    case 1: //East
+        json["x"] = xCoord + (ui->shootComboBox->currentText()).toInt();
+        json["y"] = yCoord;
+        break;
+    }
+    qDebug() << json;
 
     QJsonDocument jsonDoc(json);
     QByteArray postData = jsonDoc.toJson();
-    QNetworkRequest request;
 
-    request.setUrl(url);
+    QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     QNetworkReply *reply = networkManager->post(request, postData);
 
     connect(reply, &QNetworkReply::finished, this, [=]() {
         if (reply->error() == QNetworkReply::NoError) {
-            QMessageBox::information(this, "Success", "Shoot request sent");
+            QMessageBox::information(this, "Success", "Shoot request sent: " + reply->readAll());
         } else {
             QMessageBox::critical(this, "Error", "Shoot request failed: " + reply->errorString());
         }
+        getState();
         reply->deleteLater();
     });
 }
 
 void MainWindow::parseState(const QJsonObject &json)
 {
-    if (json.contains("robot") && json["robot"].isObject()) {
-        QJsonObject robot = json["robot"].toObject();
-
-        ui->robotIdLabel->setText("Robot ID: " + robot["id"].toString());
-        qDebug() << "Robot ID:" << robot["id"].toString();
+    if (json.contains("robot_state") && json["robot_state"].isObject()) {
+        QJsonObject robot = json["robot_state"].toObject();
 
         // Обновление состояния торса
         if (robot.contains("torso") && robot["torso"].isObject()) {
             QJsonObject torso = robot["torso"].toObject();
             int torsoCapacity = torso["capacity"].toInt();
             ui->torsoProgressBar->setValue(torsoCapacity);
-            qDebug() << "Torso capacity:" << torsoCapacity;
+            qDebug() << "Torso capacity: " << torsoCapacity;
+        }
+
+        // Обновление координат
+        if (json.contains("intelligence_inf") && json["intelligence_inf"].isObject()) {
+            QJsonObject intelligence = json["intelligence_inf"].toObject();
+            if (intelligence.contains("position") && intelligence["position"].isObject()) {
+                direction = intelligence.value("faced_to").toString().toStdString();
+                qDebug() << direction;
+                QJsonObject position = intelligence["position"].toObject();
+                xCoord = position["x"].toInt();
+                yCoord = position["y"].toInt();
+
+                ui->xEdit->setText(QString::number(xCoord));
+                ui->yEdit->setText(QString::number(yCoord));
+
+                qDebug() << "Updated Coordinates: X=" << xCoord << ", Y=" << yCoord;
+                // Обновляем карту после получения новых координат
+                getMap();
+            } else {
+                qDebug() << "Error: 'position' object is missing in 'intelligence'";
+            }
+        } else {
+            qDebug() << "Error: 'intelligence' object is missing in JSON";
         }
 
         if (robot.contains("repair_station") && robot["repair_station"].isObject()) {
             QJsonObject repairStation = robot["repair_station"].toObject();
-            int repairStationCapacity = repairStation["capacity"].toInt();
-            ui->repairStationLabel_2->setValue(repairStationCapacity);
-            qDebug() << "Repair Station capacity:" << repairStationCapacity;
+            int repairStationCapacity = repairStation["repair_kit_num"].toInt();
+            ui->repairKit->setText(QString::number(repairStationCapacity));
+            qDebug() << "Repair Station capacity: " << repairStationCapacity;
         }
 
         // Обновление состояния орудия
         if (robot.contains("gun") && robot["gun"].isObject()) {
             QJsonObject gun = robot["gun"].toObject();
             int gunCapacity = gun["capacity"].toInt();
-            int gunAmmo = gun["ammo"].toInt(); // Получаем количество патронов
+            int gunAmmo = gun["cartridges"].toInt(); // Получаем количество патронов
             ui->gunProgressBar->setValue(gunCapacity);
             ui->gunAmmoLabel->setText(QString::number(gunAmmo)); // Обновляем gunAmmoLabel
-            qDebug() << "Gun capacity:" << gunCapacity;
-            qDebug() << "Gun ammo:" << gunAmmo;
+            qDebug() << "Gun capacity: " << gunCapacity;
+            qDebug() << "Gun ammo: " << gunAmmo;
         }
 
         // Обновление состояния орудийного манипулятора
@@ -205,7 +297,7 @@ void MainWindow::parseState(const QJsonObject &json)
             QJsonObject gunManip = robot["gun_manip"].toObject();
             int gunManipCapacity = gunManip["capacity"].toInt();
             ui->gunManipProgressBar->setValue(gunManipCapacity);
-            qDebug() << "Gun Manip capacity:" << gunManipCapacity;
+            qDebug() << "Gun Manip capacity: " << gunManipCapacity;
         }
 
         // Обновление состояния хватательного манипулятора
@@ -213,7 +305,7 @@ void MainWindow::parseState(const QJsonObject &json)
             QJsonObject grabManip = robot["grab_manip"].toObject();
             int grabManipCapacity = grabManip["capacity"].toInt();
             ui->grabManipProgressBar->setValue(grabManipCapacity);
-            qDebug() << "Grab Manip capacity:" << grabManipCapacity;
+            qDebug() << "Grab Manip capacity: " << grabManipCapacity;
         }
 
         // Обновление состояния левой ноги
@@ -221,57 +313,14 @@ void MainWindow::parseState(const QJsonObject &json)
             QJsonObject leftLeg = robot["left_leg"].toObject();
             int leftLegCapacity = leftLeg["capacity"].toInt();
             ui->leftLegProgressBar->setValue(leftLegCapacity);
-            qDebug() << "Left Leg capacity:" << leftLegCapacity;
+            qDebug() << "Left Leg capacity: " << leftLegCapacity;
         }
-
         // Обновление состояния правой ноги
         if (robot.contains("right_leg") && robot["right_leg"].isObject()) {
             QJsonObject rightLeg = robot["right_leg"].toObject();
             int rightLegCapacity = rightLeg["capacity"].toInt();
             ui->rightLegProgressBar->setValue(rightLegCapacity);
-            qDebug() << "Right Leg capacity:" << rightLegCapacity;
-        }
-
-        // Обновление координат из локальных переменных
-        ui->xEdit->setText(QString::number(xCoord));
-        ui->yEdit->setText(QString::number(yCoord));
-
-        if (json.contains("intelligence") && json["intelligence"].isObject()) {
-            QJsonObject intelligence = json["intelligence"].toObject();
-            ui->directionComboBox->setCurrentText(intelligence["faced_to"].toString());
-        }
-
-        // Заполнение componentIdComboBox
-        ui->componentIdComboBox->clear();
-        if (robot.contains("gun") && robot["gun"].isObject()) {
-            ui->componentIdComboBox->addItem(robot["gun"].toObject()["ID"].toString());
-        }
-        if (robot.contains("gun_manip") && robot["gun_manip"].isObject()) {
-            ui->componentIdComboBox->addItem(robot["gun_manip"].toObject()["ID"].toString());
-        }
-        if (robot.contains("grab_manip") && robot["grab_manip"].isObject()) {
-            ui->componentIdComboBox->addItem(robot["grab_manip"].toObject()["ID"].toString());
-        }
-        if (robot.contains("torso") && robot["torso"].isObject()) {
-            ui->componentIdComboBox->addItem(robot["torso"].toObject()["ID"].toString());
-        }
-
-        // Заполнение componentIdComboBox_2
-        ui->componentIdComboBox->clear();
-        if (robot.contains("gun") && robot["gun"].isObject()) {
-            ui->componentIdComboBox->addItem(robot["gun"].toObject()["ID"].toString());
-        }
-        if (robot.contains("gun_manip") && robot["gun_manip"].isObject()) {
-            ui->componentIdComboBox->addItem(robot["gun_manip"].toObject()["ID"].toString());
-        }
-        if (robot.contains("grab_manip") && robot["grab_manip"].isObject()) {
-            ui->componentIdComboBox->addItem(robot["grab_manip"].toObject()["ID"].toString());
-        }
-        if (robot.contains("torso") && robot["torso"].isObject()) {
-            ui->componentIdComboBox->addItem(robot["torso"].toObject()["ID"].toString());
-        }
-        if (robot.contains("repair_station") && robot["repair_station"].isObject()) {
-            ui->componentIdComboBox->addItem(robot["repair_station"].toObject()["ID"].toString());
+            qDebug() << "Right Leg capacity: " << rightLegCapacity;
         }
     }
 }
@@ -288,12 +337,12 @@ void MainWindow::paintEvent(QPaintEvent *event)
     for(i = 0; i < jsonMap.size(); i++)
     {
         QJsonArray tmpArray = jsonMap.at(i).toArray();
-        int x_rect = 45;
-        int y_rect = 35;
+        int x_rect = 44;
+        int y_rect = 34;
         int y = 320+i*(y_rect+10);
         for(int j = 0; j < tmpArray.size(); j++)
         {
-            int x= 45+j*(x_rect+10);
+            int x = x_rect+j*(x_rect+10);
             switch(int_from_map(tmpArray.at(j).toString().toStdString()))
             {
             case 0:
@@ -305,8 +354,32 @@ void MainWindow::paintEvent(QPaintEvent *event)
                 painter.drawRect(x, y, x_rect, y_rect);
                 break;
             case 2:
-                painter.setPen(Qt::blue);
-                painter.drawRect(x, y, x_rect, y_rect);
+                QPolygon polygon;
+                switch(int_from_direction(direction))
+                {
+                case 0: //North
+                    polygon << QPoint(x + x_rect/2, y) << QPoint(x,y+y_rect) << QPoint(x + x_rect, y + y_rect);
+                    painter.setPen(Qt::blue);
+                    painter.drawPolygon(polygon);
+                    break;
+                case 2: //South
+                    polygon << QPoint(x + x_rect/2, y + y_rect) << QPoint(x, y) << QPoint(x + x_rect, y);
+                    painter.setPen(Qt::blue);
+                    painter.drawPolygon(polygon);
+                    break;
+                case 3: //West
+                    polygon << QPoint(x, y + y_rect/2) << QPoint(x + x_rect, y ) << QPoint(x + x_rect, y + y_rect);
+                    painter.setPen(Qt::blue);
+                    painter.drawPolygon(polygon);
+                    break;
+                case 1: //East
+                    polygon << QPoint(x + x_rect, y + y_rect/2) << QPoint(x, y) << QPoint(x, y + y_rect);
+                    painter.setPen(Qt::blue);
+                    painter.drawPolygon(polygon);
+                    break;
+                }
+                break;
+
             }
         }
     }
@@ -315,31 +388,51 @@ void MainWindow::paintEvent(QPaintEvent *event)
     }
     painter.end();
 }
+
 void MainWindow::getMap()
 {
     QNetworkRequest request;
-    request.setUrl(QUrl("https://qmaptest5.free.beeceptor.com/map"));
-    networkManager->get(request);
+    QUrl url = serverUrl;
+    url.setPath("/map");
+    request.setUrl(url);
     QNetworkReply *reply = networkManager->get(request);
     connect(reply, &QNetworkReply::finished, this, [=]() {
         if (reply->error() == QNetworkReply::NoError)
         {
-            document = QJsonDocument::fromJson(reply->readAll());
-            QJsonObject root = document.object();
-            QJsonObject map = (root.value("map")).toObject();
-            mapSize = map.value("size").toInt();
-            jsonMap = (map.value("items")).toArray();
-            qDebug() << document;
+            QJsonDocument root = QJsonDocument::fromJson(reply->readAll());
+            QJsonObject rootObject = root.object(); // root - это ваш QJsonDocument
+            QJsonObject dataObject = rootObject.value("data").toObject();
+            QJsonArray itemsArray = dataObject.value("items").toArray();
+            qDebug() << itemsArray;
+
+            if (xCoord >= 0 && xCoord < itemsArray.size()) {
+                QJsonArray rowArray = itemsArray.at(yCoord).toArray();
+
+                if (yCoord >= 0 && yCoord < rowArray.size()) {
+                    rowArray[xCoord] = QJsonValue("Bot"); // Используем оператор [] для изменения элемента
+                    itemsArray[yCoord] = rowArray;       // Заменяем строку в массиве itemsArray
+                    dataObject["items"] = itemsArray;       // Заменяем массив items в объекте data
+                    rootObject["data"] = dataObject;       // Заменяем объект data в корневом объекте
+
+                    root = QJsonDocument(rootObject);      // Обновляем QJsonDocument
+                }
+                QJsonObject map = (rootObject.value("data")).toObject();
+                jsonMap = (map.value("items")).toArray();
+                qDebug() << jsonMap;
+            }
+            else
+            {
+                QMessageBox::critical(this, "Error", "Network error: " + reply->errorString());
+            }
+            repaint();
             reply->deleteLater();
-            QWidget::repaint();
         }
-        else
-        {
-            QMessageBox::critical(this, "Error", "Network error: " + reply->errorString());
-        }
-        reply->deleteLater();
     });
 }
+
+
+
+
 int int_from_map(const std::string& map)
 {
     for (int i = 0; i < std::size(map_items); i++)
@@ -349,5 +442,12 @@ int int_from_map(const std::string& map)
     }
     return 10;
 }
-
-
+int int_from_direction(const std::string& direction)
+{
+    for (int i = 0; i < std::size(direction_items); i++)
+    {
+        if (direction == direction_items[i])
+            return i;
+    }
+    return 10;
+}

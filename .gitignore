@@ -1,6 +1,9 @@
 
 # gihub files
 
+# docker files
+docker-compose.yml
+
 # "database" dir
 server/database/mehConfig.json
 

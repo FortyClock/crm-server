@@ -12,8 +12,8 @@ namespace sutils{
         Json::Value allData;
     
         std::ifstream configMehFile(
-            std::string(getenv("HOME")) + "/crm-server/server/database/" +
-            filename, std::ifstream::binary);
+            std::string(getenv("CRM_SERVER_DB_DIR")) + filename,
+            std::ifstream::binary);
         if(!configMehFile.is_open()){
     
             throw std::runtime_error("Can't open the file");
@@ -31,10 +31,10 @@ namespace sutils{
     
     }
 
-    void rewriteJsonFile(const std::string& filename, const Json::Value& allData) {
+    void rewriteConfigMehJsonFile(const std::string& filename, const Json::Value& allData) {
         
         std::ofstream newMehConfigFile(
-            std::string(getenv("HOME")) + "/crm-server/server/database/" + filename);
+            std::string(getenv("CRM_SERVER_DB_DIR")) + filename);
         if(newMehConfigFile.is_open()){
     
             newMehConfigFile << allData;
