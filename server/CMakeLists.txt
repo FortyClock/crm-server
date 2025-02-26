@@ -64,7 +64,7 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER DM)
 set(CPACK_GENERATOR "DEB")
 set(CPACK_PACKAGE_HOMEPAGE_URL https://github.com/FortyClock/crm-server.git)
 set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.27), gcc, g++, cmake, libjsoncpp-dev, uuid-dev, zlib1g-dev, openssl, libssl-dev, libyaml-cpp-dev, libpq-dev, libmariadb-dev")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 install(TARGETS ${PROJECT_NAME} DESTINATION /usr/bin)
 
 include(CPack)
