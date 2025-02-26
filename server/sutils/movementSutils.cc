@@ -44,11 +44,11 @@ namespace movementSutils{
         int xPosition = mehConfig["intelligence_inf"]["position"]["x"].asInt();
         int yPosition = mehConfig["intelligence_inf"]["position"]["y"].asInt();
 
-        if (mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20)
+        /*if (mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20)
             throw std::logic_error("low left leg capicity");
 
         if (mehConfig["robot_state"]["right_leg"]["capacity"].asInt() <= 20)
-            throw std::logic_error("low right leg capicity");
+            throw std::logic_error("low right leg capicity");*/
 
         if (mehConfig["robot_state"]["torso"]["capacity"].asInt() <= 20)
             throw std::logic_error("low torso capicity");
@@ -57,27 +57,75 @@ namespace movementSutils{
         std::string facedTo = mehConfig["intelligence_inf"]["faced_to"].asString();
 
 
-        if (xPosition == x && yPosition == y) { // движение прямо или назад
+        if(facedTo == "N" || facedTo == "S"){
+            if(xPosition == x){ // движение вперед или назад
+                if(mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20 || mehConfig["robot_state"]["right_leg"]["capacity"].asInt() <= 20){
+                    throw std::logic_error("legs are broken");
+                }
+                mehConfig["robot_state"]["left_leg"]["capacity"] = mehConfig["robot_state"]["left_leg"]["capacity"].asInt() - 5;
+                mehConfig["robot_state"]["right_leg"]["capacity"] = mehConfig["robot_state"]["right_leg"]["capacity"].asInt() - 5;
+            } else if(facedTo == "N"){ 
+                if(xPosition < x){ // движение вправо
+                    if(mehConfig["robot_state"]["right_leg"]["capacity"].asInt() <= 20){
+                        throw std::logic_error("low right leg capicity");
+                    } 
+                    mehConfig["robot_state"]["right_leg"]["capacity"] = mehConfig["robot_state"]["right_leg"]["capacity"].asInt() - 10;
+                } else{ // движение влево
+                    if(mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20){
+                        throw std::logic_error("low left leg capicity");
+                    }
+                    mehConfig["robot_state"]["left_leg"]["capacity"] = mehConfig["robot_state"]["left_leg"]["capacity"].asInt() - 10;
+                } 
+                    
+            } else{
+                if(xPosition > x){ // движение вправо
+                    if(mehConfig["robot_state"]["right_leg"]["capacity"].asInt() <= 20){
+                        throw std::logic_error("low right leg capicity");
+                    }
+                    mehConfig["robot_state"]["right_leg"]["capacity"] = mehConfig["robot_state"]["right_leg"]["capacity"].asInt() - 10;
+                } else{ // движение влево
+                    if(mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20){
+                        throw std::logic_error("low left leg capicity");
+                    }
+                    mehConfig["robot_state"]["left_leg"]["capacity"] = mehConfig["robot_state"]["left_leg"]["capacity"].asInt() - 10;
+                } 
+                    
+            }           
+        } else if(yPosition == y){ // движение вперед или назад
+            if(mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20 || mehConfig["robot_state"]["right_leg"]["capacity"].asInt() <= 20){
+                throw std::logic_error("legs are broken");
+            }
             mehConfig["robot_state"]["left_leg"]["capacity"] = mehConfig["robot_state"]["left_leg"]["capacity"].asInt() - 5;
             mehConfig["robot_state"]["right_leg"]["capacity"] = mehConfig["robot_state"]["right_leg"]["capacity"].asInt() - 5;
-        } else {
-            if (facedTo == "N" || facedTo == "S") {
-                if ((facedTo == "N" && xPosition > x) || (facedTo == "S" && x > xPosition)) {
-                    mehConfig["robot_state"]["left_leg"]["capacity"] = mehConfig["robot_state"]["left_leg"]["capacity"].asInt() - 10;
-                } else if ((facedTo == "N" && x < xPosition) || (facedTo == "S" && xPosition < x)) {
-                    mehConfig["robot_state"]["right_leg"]["capacity"] = mehConfig["robot_state"]["right_leg"]["capacity"].asInt() - 10;
+        } else if(facedTo == "W"){
+            if(yPosition < y){ // движение влево
+                if(mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20){
+                    throw std::logic_error("low left leg capicity");
                 }
-            } else if (facedTo == "W" || facedTo == "E") {
-                if ((facedTo == "W" && y > yPosition) || (facedTo == "E" && yPosition > y)) {
-                    mehConfig["robot_state"]["left_leg"]["capacity"] = mehConfig["robot_state"]["left_leg"]["capacity"].asInt() - 10;
-                } else if ((facedTo == "W" && yPosition > y) || (facedTo == "E" && y > yPosition)) {
-                    mehConfig["robot_state"]["right_leg"]["capacity"] = mehConfig["robot_state"]["right_leg"]["capacity"].asInt() - 10;
+                mehConfig["robot_state"]["left_leg"]["capacity"] = mehConfig["robot_state"]["left_leg"]["capacity"].asInt() - 10;
+            } else{ // движение вправо
+                if(mehConfig["robot_state"]["right_leg"]["capacity"].asInt() <= 20){
+                    throw std::logic_error("low right leg capicity");
                 }
-            }
+                mehConfig["robot_state"]["right_leg"]["capacity"] = mehConfig["robot_state"]["right_leg"]["capacity"].asInt() - 10;
+            }                
+        } else{
+            if(yPosition > y){ // движение влево
+                if(mehConfig["robot_state"]["left_leg"]["capacity"].asInt() <= 20){
+                    throw std::logic_error("low left leg capicity");
+                }
+                mehConfig["robot_state"]["left_leg"]["capacity"] = mehConfig["robot_state"]["left_leg"]["capacity"].asInt() - 10;
+            } else{// движение вправо
+                if(mehConfig["robot_state"]["right_leg"]["capacity"].asInt() <= 20)
+                    throw std::logic_error("low right leg capicity");
+                mehConfig["robot_state"]["right_leg"]["capacity"] = mehConfig["robot_state"]["right_leg"]["capacity"].asInt() - 10;
+            } 
+                
         }
+
         // Уменьшение прочности торса при любом движении
         mehConfig["robot_state"]["torso"]["capacity"] = mehConfig["robot_state"]["torso"]["capacity"].asInt() - 1;
-    
+
         mehConfig["intelligence_inf"]["position"]["x"] = x;
         mehConfig["intelligence_inf"]["position"]["y"] = y;
 

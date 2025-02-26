@@ -15,7 +15,7 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
         if(!config.isMember("robot_state") || !config.isMember("intelligence_inf")){
             Json::Value errorResponse;
             errorResponse["status"] = "error";
-            errorResponse["message"] = "RobotState or IntelligenceState not found in configuration";
+            errorResponse["message"] = "robot_state or intelligence_inf not found in configuration";
 
             auto response = drogon::HttpResponse::newHttpJsonResponse(errorResponse);
             response->setStatusCode(drogon::HttpStatusCode::k404NotFound);
@@ -24,6 +24,9 @@ void StateController::getState(const drogon::HttpRequestPtr &req,
         }
 
         // извлекаем RobotState и IntelligenceState 
+
+        // извлекаем RobotState и IntelligenceState
+
         Json::Value robotState = config["robot_state"];
         Json::Value intelligenceState = config["intelligence_inf"];
 
