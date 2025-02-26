@@ -123,12 +123,10 @@ namespace movementSutils{
 
         mehConfig["intelligence_inf"]["position"]["x"] = x;
         mehConfig["intelligence_inf"]["position"]["y"] = y;
-
     }
 
     void turning(std::string turn, Json::Value& mehConfig){
 
         mehConfig["intelligence_inf"]["faced_to"] = turn;
     }
-
 }
