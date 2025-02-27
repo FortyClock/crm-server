@@ -8,9 +8,15 @@
 #include <QUrl>
 #include <QNetworkRequest>
 #include <QPainter>
+#include <QDialog>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QTimer>
+#include <QPushButton>
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent)
-    :QMainWindow(parent)
+    : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -18,7 +24,32 @@ MainWindow::MainWindow(QWidget *parent)
     networkManager = new QNetworkAccessManager(this);
     serverUrl = QUrl("http://localhost:3000");
 
-    // **Подключаем сигналы нажатия кнопок движения к слотам:**
+    // Инициализация диалогового окна
+    connectionDialog = new QDialog(this);
+    connectionDialog->setWindowTitle("Ожидание подключения к серверу...");
+    connectionDialog->setWindowFlags(Qt::WindowCloseButtonHint); // Add close button
+
+    // Create label
+    connectionStatusLabel = new QLabel("Подключение...", connectionDialog);
+    connectionStatusLabel->setAlignment(Qt::AlignCenter);
+
+    // Create layout
+    QVBoxLayout *dialogLayout = new QVBoxLayout(connectionDialog);
+    dialogLayout->addWidget(connectionStatusLabel);
+
+    // Set fixed size
+    connectionDialog->setFixedSize(300, 100);
+
+    // Set layout
+    connectionDialog->setLayout(dialogLayout);
+    connectionDialog->show();
+
+    // Инициализация таймера для проверки подключения
+    connectionTimer = new QTimer(this);
+    connect(connectionTimer, &QTimer::timeout, this, &MainWindow::checkServerConnection);
+    connectionTimer->start(2000); // Проверяем каждые 2 секунды
+
+    // Подключаем сигналы нажатия кнопок движения к слотам:
     connect(ui->moveForwardButton, &QPushButton::clicked, this, &MainWindow::moveForward);
     connect(ui->moveBackwardButton, &QPushButton::clicked, this, &MainWindow::moveBackward);
     connect(ui->moveLeftButton, &QPushButton::clicked, this, &MainWindow::moveLeft);
@@ -30,13 +61,58 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->rotateRightButton, &QPushButton::clicked, this, &MainWindow::rotateRight);
     connect(ui->shootButton, &QPushButton::clicked, this, &MainWindow::sendShootRequest);
     connect(ui->mapWidget, &QPushButton::clicked, this, &MainWindow::handleMapButtonClick); // Подключение для mapWidget
-    getState();
 }
+
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+void MainWindow::checkServerConnection()
+{
+    QUrl url = serverUrl;
+    url.setPath("/state"); // Используем endpoint /state
+
+    QNetworkRequest request;
+    request.setUrl(url);
+
+    QNetworkReply *reply = networkManager->get(request);
+
+    connect(reply, &QNetworkReply::finished, this, [=]() {
+        if (reply->error() == QNetworkReply::NoError) {
+            QByteArray responseData = reply->readAll();
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+            if (jsonDoc.isObject()) {
+                // Сервер доступен, можно закрыть диалоговое окно
+                isConnectedToServer = true;
+                connectionTimer->stop();
+                connectionDialog->close();
+                connectionDialog->deleteLater();
+                connectionDialog = nullptr; // Set to nullptr after deleting
+                connectionTimer->deleteLater();
+                connectionTimer = nullptr;
+                getState();
+                QMessageBox::information(this, "Подключение установлено", "Успешное подключение к серверу!");
+            } else {
+                qDebug() << "Invalid JSON response from server";
+            }
+        } else {
+            qDebug() << "Error connecting to server: " << reply->errorString();
+        }
+        reply->deleteLater();
+    });
+}
+
+
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (!isConnectedToServer) {
+        QMessageBox::information(this, "Предупреждение", "Не удалось подключиться к серверу. Приложение будет закрыто.");
+        QApplication::quit(); // Закрываем приложение, если не подключились к серверу
+    }
+    event->accept(); // Разрешаем закрыть приложение, если подключились к серверу
+}
 void MainWindow::getState()
 {
     QUrl url = serverUrl;

@@ -12,7 +12,12 @@
 #include <QJsonArray>
 #include <QPaintEvent>
 #include <QPainter>
-#include "ui_mainwindow.h" // Этот файл генерируется из вашего .ui файла
+#include <QDialog>
+#include <QLabel>
+#include <QTimer>
+#include <QPushButton>
+#include <QCloseEvent>
+#include "ui_mainwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,8 +25,7 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -57,12 +61,22 @@ private:
     // Локальные переменные для хранения координат
     int xCoord = 0;
     int yCoord = 0;
+
+    // Добавляем переменные для диалогового окна
+    QDialog *connectionDialog;
+    QLabel *connectionStatusLabel;
+    QTimer *connectionTimer;
+    bool isConnectedToServer = false;
+
+
+    void checkServerConnection();
+    void closeEvent(QCloseEvent *event) override;
 };
-const std::string map_items[] { "Empty", "Enemy", "Bot"};
-const std::string direction_items[] {"N", "E", "S", "W"};
-const QString componentId[] {"gun_manip_001", "gun_001", "torso_001", "grab_manip_001", "left_leg_001", "right_leg_001"};
-int int_from_map(const std::string& map);
-int int_from_direction(const std::string& direction);
+const std::string map_items[]{"Empty", "Enemy", "Bot"};
+const std::string direction_items[]{"N", "E", "S", "W"};
+const QString componentId[]{"gun_manip_001", "gun_001", "torso_001",
+                            "grab_manip_001", "left_leg_001", "right_leg_001"};
+int int_from_map(const std::string &map);
+int int_from_direction(const std::string &direction);
 
 #endif // MAINWINDOW_H
-
