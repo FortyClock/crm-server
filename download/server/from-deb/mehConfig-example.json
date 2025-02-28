@@ -1,10 +1,10 @@
 {
 	"intelligence_inf" : 
 	{
-		"faced_to" : "E",
+		"faced_to" : "W",
 		"position" : 
 		{
-			"x" : 4,
+			"x" : 9,
 			"y" : 3
 		}
 	},
@@ -144,34 +144,34 @@
 		},
 		"gun" : 
 		{
-			"capacity" : 60,
+			"capacity" : 70,
 			"cartridges" : 2,
 			"id" : "gun_001"
 		},
 		"gun_manip" : 
 		{
-			"capacity" : 70,
+			"capacity" : 80,
 			"id" : "gun_manip_001"
 		},
 		"left_leg" : 
 		{
-			"capacity" : 100,
+			"capacity" : 75,
 			"id" : "left_leg_001"
 		},
 		"repair_station" : 
 		{
 			"capacity" : 10,
 			"id" : "repair_unit_001",
-			"repair_kit_num" : 6
+			"repair_kit_num" : 4
 		},
 		"right_leg" : 
 		{
-			"capacity" : 100,
+			"capacity" : 75,
 			"id" : "right_leg_001"
 		},
 		"torso" : 
 		{
-			"capacity" : 96,
+			"capacity" : 91,
 			"id" : "torso_001"
 		}
 	},
