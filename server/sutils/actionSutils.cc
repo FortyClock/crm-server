@@ -89,7 +89,7 @@ namespace actionSUtils{
             mehConfig["robot_state"]["gun_manip"]["capacity"].asInt() - 5;
     
         mehConfig["robot_state"]["torso"]["capacity"] = 
-            mehConfig["robot_state"]["torso"]["capacity"].asInt() - 1;
+            mehConfig["robot_state"]["torso"]["capacity"].asInt() - 2;
     
     
         if(mehConfig["map"]["items"][y][x] == "Empty"){
